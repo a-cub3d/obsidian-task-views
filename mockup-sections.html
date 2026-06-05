@@ -1,0 +1,379 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Section Style Comparison</title>
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=DM+Sans:ital,opsz,wght@0,9..40,300;0,9..40,400;0,9..40,500;1,9..40,300&display=swap');
+
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+  :root {
+    --bg-primary: #1e1e1e;
+    --bg-secondary: #161616;
+    --bg-tertiary: #252525;
+    --bg-hover: #2a2a2a;
+    --border: #333333;
+    --text-primary: #dcddde;
+    --text-secondary: #8b8b8b;
+    --text-muted: #555555;
+    --accent: #7c6af7;
+    --green: #4caf86;
+    --orange: #e09a5a;
+    --red: #e06c6c;
+    --red-dim: rgba(224,108,108,0.10);
+    --red-dim2: rgba(224,108,108,0.16);
+  }
+
+  body {
+    font-family: 'DM Sans', sans-serif;
+    background: #111;
+    color: var(--text-primary);
+    display: flex;
+    gap: 32px;
+    padding: 32px;
+    align-items: flex-start;
+    justify-content: center;
+    min-height: 100vh;
+  }
+
+  .col {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+    width: 280px;
+  }
+
+  .col-label {
+    font-size: 11px;
+    font-weight: 600;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    color: var(--text-muted);
+    padding-bottom: 4px;
+    border-bottom: 1px solid #2a2a2a;
+    margin-bottom: 4px;
+  }
+
+  /* ── Shared sidebar shell ── */
+  .sidebar {
+    background: var(--bg-tertiary);
+    border-radius: 8px;
+    overflow: hidden;
+    display: flex;
+    flex-direction: column;
+    gap: 0;
+  }
+
+  .quick-add {
+    padding: 8px 10px;
+    border-bottom: 1px solid var(--border);
+  }
+
+  .quick-add input {
+    width: 100%;
+    background: var(--bg-primary);
+    border: 1px solid var(--border);
+    border-radius: 4px;
+    padding: 6px 8px;
+    color: var(--text-primary);
+    font-size: 13px;
+    font-family: inherit;
+    outline: none;
+  }
+
+  .task-row {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    padding: 5px 12px;
+    font-size: 13px;
+    color: var(--text-primary);
+  }
+
+  .task-row input[type=checkbox] { flex-shrink: 0; }
+
+  .task-meta {
+    font-size: 11px;
+    color: var(--text-muted);
+    padding: 0 12px 6px 32px;
+  }
+
+  .task-meta .scheduled { color: var(--text-muted); }
+  .task-meta .due-today { color: var(--orange); }
+
+  .stats {
+    border-top: 1px solid var(--border);
+    padding: 8px 10px 12px;
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+  }
+
+  .progress-bar {
+    height: 8px;
+    background: var(--border);
+    border-radius: 99px;
+    overflow: hidden;
+  }
+
+  .progress-fill {
+    height: 100%;
+    width: 33%;
+    background: linear-gradient(to right, var(--accent), var(--green));
+    border-radius: 99px;
+  }
+
+  .pills {
+    display: flex;
+    gap: 6px;
+    justify-content: center;
+  }
+
+  .pill {
+    font-size: 11px;
+    color: var(--text-secondary);
+    background: rgba(255,255,255,0.06);
+    border-radius: 10px;
+    padding: 2px 10px;
+  }
+
+  .pill.overdue { color: var(--red); }
+
+  /* ════════════════════════════════
+     OPTION A — Subtle group headers
+     (like our original)
+     ════════════════════════════════ */
+
+  .a-section { display: flex; flex-direction: column; }
+
+  .a-header {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    padding: 6px 10px;
+    cursor: pointer;
+    user-select: none;
+  }
+
+  .a-header:hover { background: var(--bg-hover); }
+
+  .chevron { font-size: 10px; color: var(--text-muted); }
+
+  .a-title {
+    flex: 1;
+    font-size: 12px;
+    font-weight: 600;
+    color: var(--text-secondary);
+    text-transform: uppercase;
+    letter-spacing: 0.06em;
+  }
+
+  .a-count {
+    font-size: 11px;
+    color: var(--text-muted);
+    background: rgba(255,255,255,0.06);
+    border-radius: 10px;
+    padding: 1px 7px;
+  }
+
+  .a-section.overdue .a-title { color: var(--red); }
+  .a-section.overdue .a-count { color: var(--red); background: var(--red-dim); }
+
+  /* ════════════════════════════════
+     OPTION B — Bordered card sections
+     (like the overdue banner we had)
+     ════════════════════════════════ */
+
+  .b-section {
+    margin: 4px 8px;
+    border-radius: 6px;
+    border: 1px solid var(--border);
+    overflow: hidden;
+  }
+
+  .b-header {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    padding: 6px 10px;
+    cursor: pointer;
+    user-select: none;
+    background: rgba(255,255,255,0.03);
+  }
+
+  .b-header:hover { background: rgba(255,255,255,0.06); }
+
+  .b-title {
+    flex: 1;
+    font-size: 12px;
+    font-weight: 600;
+    color: var(--text-secondary);
+    text-transform: uppercase;
+    letter-spacing: 0.06em;
+  }
+
+  .b-count {
+    font-size: 11px;
+    color: var(--text-muted);
+    background: rgba(255,255,255,0.06);
+    border-radius: 10px;
+    padding: 1px 7px;
+  }
+
+  .b-section.overdue {
+    border-color: var(--red);
+  }
+
+  .b-section.overdue .b-header {
+    background: var(--red-dim);
+  }
+
+  .b-section.overdue .b-header:hover {
+    background: var(--red-dim2);
+  }
+
+  .b-section.overdue .b-title { color: var(--red); }
+  .b-section.overdue .b-count { color: var(--red); background: var(--red-dim2); }
+
+  /* ════════════════════════════════
+     OPTION C — Accent line left border
+     ════════════════════════════════ */
+
+  .c-section {
+    margin: 2px 0;
+    border-left: 3px solid transparent;
+  }
+
+  .c-section.today { border-left-color: var(--accent); }
+  .c-section.overdue { border-left-color: var(--red); }
+
+  .c-header {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    padding: 6px 10px 6px 9px;
+    cursor: pointer;
+    user-select: none;
+  }
+
+  .c-header:hover { background: var(--bg-hover); }
+
+  .c-title {
+    flex: 1;
+    font-size: 12px;
+    font-weight: 600;
+    color: var(--text-secondary);
+    text-transform: uppercase;
+    letter-spacing: 0.06em;
+  }
+
+  .c-count {
+    font-size: 11px;
+    color: var(--text-muted);
+    background: rgba(255,255,255,0.06);
+    border-radius: 10px;
+    padding: 1px 7px;
+  }
+
+  .c-section.overdue .c-title { color: var(--red); }
+  .c-section.overdue .c-count { color: var(--red); background: var(--red-dim); }
+
+</style>
+</head>
+<body>
+
+<!-- ── OPTION A ── -->
+<div class="col">
+  <div class="col-label">A — Subtle headers</div>
+  <div class="sidebar">
+    <div class="quick-add"><input type="text" placeholder="Add to inbox…"></div>
+
+    <div class="a-section overdue">
+      <div class="a-header"><span class="chevron">▶</span><span class="a-title">Overdue</span><span class="a-count">3</span></div>
+    </div>
+
+    <div class="a-section">
+      <div class="a-header"><span class="chevron">▼</span><span class="a-title">Today</span><span class="a-count">2</span></div>
+      <div class="task-row"><input type="checkbox"><span>FIN M3 Coursera</span></div>
+      <div class="task-meta"><span class="scheduled">⏳ 06/04/26</span> &nbsp;<span class="due-today">📅 06/09/26</span></div>
+      <div class="task-row"><input type="checkbox"><span>FIN M3 Case Study</span></div>
+      <div class="task-meta"><span class="scheduled">⏳ 06/04/26</span></div>
+    </div>
+
+    <div class="stats">
+      <div class="progress-bar"><div class="progress-fill"></div></div>
+      <div class="pills">
+        <span class="pill">1 done</span>
+        <span class="pill">2 pending</span>
+        <span class="pill overdue">3 overdue</span>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ── OPTION B ── -->
+<div class="col">
+  <div class="col-label">B — Bordered cards</div>
+  <div class="sidebar">
+    <div class="quick-add"><input type="text" placeholder="Add to inbox…"></div>
+
+    <div style="height:6px"></div>
+
+    <div class="b-section overdue">
+      <div class="b-header"><span class="chevron">▶</span><span class="b-title">Overdue</span><span class="b-count">3</span></div>
+    </div>
+
+    <div class="b-section" style="margin-top:6px">
+      <div class="b-header"><span class="chevron">▼</span><span class="b-title">Today</span><span class="b-count">2</span></div>
+      <div class="task-row"><input type="checkbox"><span>FIN M3 Coursera</span></div>
+      <div class="task-meta"><span class="scheduled">⏳ 06/04/26</span> &nbsp;<span class="due-today">📅 06/09/26</span></div>
+      <div class="task-row"><input type="checkbox"><span>FIN M3 Case Study</span></div>
+      <div class="task-meta"><span class="scheduled">⏳ 06/04/26</span></div>
+    </div>
+
+    <div style="height:6px"></div>
+
+    <div class="stats">
+      <div class="progress-bar"><div class="progress-fill"></div></div>
+      <div class="pills">
+        <span class="pill">1 done</span>
+        <span class="pill">2 pending</span>
+        <span class="pill overdue">3 overdue</span>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ── OPTION C ── -->
+<div class="col">
+  <div class="col-label">C — Left accent border</div>
+  <div class="sidebar">
+    <div class="quick-add"><input type="text" placeholder="Add to inbox…"></div>
+
+    <div class="c-section overdue">
+      <div class="c-header"><span class="chevron">▶</span><span class="c-title">Overdue</span><span class="c-count">3</span></div>
+    </div>
+
+    <div class="c-section today">
+      <div class="c-header"><span class="chevron">▼</span><span class="c-title">Today</span><span class="c-count">2</span></div>
+      <div class="task-row"><input type="checkbox"><span>FIN M3 Coursera</span></div>
+      <div class="task-meta"><span class="scheduled">⏳ 06/04/26</span> &nbsp;<span class="due-today">📅 06/09/26</span></div>
+      <div class="task-row"><input type="checkbox"><span>FIN M3 Case Study</span></div>
+      <div class="task-meta"><span class="scheduled">⏳ 06/04/26</span></div>
+    </div>
+
+    <div class="stats">
+      <div class="progress-bar"><div class="progress-fill"></div></div>
+      <div class="pills">
+        <span class="pill">1 done</span>
+        <span class="pill">2 pending</span>
+        <span class="pill overdue">3 overdue</span>
+      </div>
+    </div>
+  </div>
+</div>
+
+</body>
+</html>

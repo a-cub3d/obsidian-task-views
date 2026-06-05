@@ -82,15 +82,22 @@ export class TaskViewsSettingTab extends PluginSettingTab {
 				text
 					.setPlaceholder(DEFAULT_TODAY_QUERY)
 					.setValue(this.plugin.settings.todayQuery)
-					.onChange(async (value) => {
+					.onChange((value) => {
 						this.plugin.settings.todayQuery = value;
-						await this.plugin.saveSettings();
 					});
 				text.inputEl.rows = 5;
 				text.inputEl.style.width = '100%';
 				text.inputEl.style.fontFamily = 'var(--font-monospace)';
 				text.inputEl.style.fontSize = 'var(--font-ui-smaller)';
-			});
+			})
+			.addButton((btn) =>
+				btn
+					.setButtonText('Apply')
+					.setCta()
+					.onClick(async () => {
+						await this.plugin.saveSettings();
+					}),
+			);
 
 		new Setting(containerEl)
 			.setName('Overdue query')
@@ -99,14 +106,21 @@ export class TaskViewsSettingTab extends PluginSettingTab {
 				text
 					.setPlaceholder(DEFAULT_OVERDUE_QUERY)
 					.setValue(this.plugin.settings.overdueQuery)
-					.onChange(async (value) => {
+					.onChange((value) => {
 						this.plugin.settings.overdueQuery = value;
-						await this.plugin.saveSettings();
 					});
 				text.inputEl.rows = 5;
 				text.inputEl.style.width = '100%';
 				text.inputEl.style.fontFamily = 'var(--font-monospace)';
 				text.inputEl.style.fontSize = 'var(--font-ui-smaller)';
-			});
+			})
+			.addButton((btn) =>
+				btn
+					.setButtonText('Apply')
+					.setCta()
+					.onClick(async () => {
+						await this.plugin.saveSettings();
+					}),
+			);
 	}
 }

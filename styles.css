@@ -16,13 +16,16 @@
 	padding: 8px 10px;
 	border-bottom: 1px solid var(--background-modifier-border);
 	flex-shrink: 0;
+}
+
+.tasks-view-quick-add-top {
 	display: flex;
-	flex-direction: column;
-	gap: 4px;
+	align-items: center;
+	gap: 8px;
 }
 
 .tasks-view-quick-add-input {
-	width: 100%;
+	flex: 1;
 	background: var(--background-primary);
 	border: 1px solid var(--background-modifier-border);
 	border-radius: 4px;
@@ -31,16 +34,95 @@
 	font-size: var(--font-ui-small);
 	outline: none;
 	box-sizing: border-box;
+	min-width: 0;
 }
 
 .tasks-view-quick-add-input:focus {
 	border-color: var(--interactive-accent);
 }
 
-.tasks-view-quick-add-label {
+.tasks-view-settings-link {
 	font-size: var(--font-ui-smaller);
 	color: var(--text-faint);
-	padding-left: 2px;
+	cursor: pointer;
+	white-space: nowrap;
+	flex-shrink: 0;
+}
+
+.tasks-view-settings-link:hover {
+	color: var(--text-muted);
+}
+
+/* ── Sections ──────────────────────────────────────────── */
+
+.tasks-view-section {
+	margin-bottom: 2px;
+}
+
+.tasks-view-section-header {
+	display: flex;
+	align-items: center;
+	gap: 6px;
+	padding: 5px 10px;
+	cursor: pointer;
+	user-select: none;
+	border-radius: 4px;
+	min-height: 28px;
+}
+
+.tasks-view-section-header:hover {
+	background: var(--background-modifier-hover);
+}
+
+.tasks-view-section-chevron {
+	color: var(--text-muted);
+	flex-shrink: 0;
+	width: 16px;
+	height: 16px;
+	display: flex;
+	align-items: center;
+	justify-content: center;
+}
+
+.tasks-view-section-title {
+	flex: 1;
+	font-size: 11px;
+	font-weight: 600;
+	letter-spacing: 0.06em;
+	text-transform: uppercase;
+	color: var(--text-muted);
+}
+
+.tasks-view-section-count {
+	font-size: var(--font-ui-smaller);
+	color: var(--text-muted);
+	background: var(--background-modifier-border);
+	border-radius: 10px;
+	padding: 1px 7px;
+	flex-shrink: 0;
+}
+
+.tasks-view-section-body {
+	padding: 0 4px;
+}
+
+.tasks-view-section-body.is-collapsed {
+	display: none;
+}
+
+/* Overdue — red accents */
+
+.tasks-view-section--overdue .tasks-view-section-title {
+	color: var(--color-red);
+}
+
+.tasks-view-section--overdue .tasks-view-section-count {
+	color: var(--color-red);
+	background: color-mix(in srgb, var(--color-red) 12%, transparent);
+}
+
+.tasks-view-section--overdue .tasks-view-section-chevron {
+	color: var(--color-red);
 }
 
 /* ── Scroll area ───────────────────────────────────────── */

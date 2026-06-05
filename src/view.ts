@@ -39,10 +39,8 @@ export class TasksSidebarView extends ItemView {
 
 	async onOpen(): Promise<void> {
 		// Gear icon in the title bar
-		this.addAction('settings', 'Tasks View settings', () => {
-			// @ts-expect-error — accessing internal settings API
-			this.app.setting.openTabById('obsidian-task-views');
-		});
+
+
 
 		this.buildShell();
 		await this.refresh();
@@ -54,6 +52,23 @@ export class TasksSidebarView extends ItemView {
 	// ── Shell (built once) ──────────────────────────────
 
 	private buildShell() {
+		// Add settings icon to the view's header action bar
+		const actionsEl = this.containerEl.closest('.workspace-leaf')
+			?.querySelector('.view-actions') as HTMLElement | null;
+		if (actionsEl && !actionsEl.querySelector('.tasks-view-settings-btn')) {
+			const btn = actionsEl.createEl('button', {
+				cls: 'clickable-icon view-action tasks-view-settings-btn',
+				attr: { 'aria-label': 'Tasks View settings' },
+			});
+			setIcon(btn, 'lucide-settings');
+			btn.addEventListener('click', () => {
+				// @ts-expect-error — internal settings API
+				this.app.setting.open();
+				// @ts-expect-error — internal settings API
+				this.app.setting.openTabById('obsidian-task-views');
+			});
+		}
+
 		const container = this.containerEl.children[1] as HTMLElement;
 		container.empty();
 		container.addClass('tasks-view-container');
@@ -62,9 +77,8 @@ export class TasksSidebarView extends ItemView {
 
 		const scroll = container.createEl('div', { cls: 'tasks-view-scroll' });
 
-		// Overdue section (hidden until we know there are overdue tasks)
+		// Overdue section — starts visible so Tasks can render into it, hidden after count check
 		this.overdueSection = scroll.createEl('div', { cls: 'tasks-view-section tasks-view-section--overdue' });
-		this.overdueSection.style.display = 'none';
 
 		const overdueHeader = this.overdueSection.createEl('div', { cls: 'tasks-view-section-header' });
 		this.overdueChevron = overdueHeader.createEl('div', { cls: 'tasks-view-section-chevron' });
@@ -137,23 +151,40 @@ export class TasksSidebarView extends ItemView {
 				this,
 			);
 			this.interceptLinks(this.overdueBody);
-
-			// Hide the overdue section if query returned no tasks
-			const taskCount = this.getRenderedTaskCount(this.overdueBody);
-			this.overdueSection.style.display = taskCount > 0 ? '' : 'none';
-			if (this.overdueCount) this.overdueCount.setText(String(taskCount));
 		}
 
-		// Update today count from rendered output
-		if (this.todayBody && this.todayCount) {
-			const count = this.getRenderedTaskCount(this.todayBody);
-			this.todayCount.setText(String(count));
-		}
+		// Wait for Tasks plugin to finish processing code blocks, then update counts
+		setTimeout(() => this.updateCounts(), 600);
 	}
 
-	// Count tasks from rendered Tasks output by looking for task list items
-	private getRenderedTaskCount(container: HTMLElement): number {
-		return container.querySelectorAll('.tasks-list-text').length;
+	private updateCounts() {
+		const today = getToday();
+		const flatten = (tasks: Task[]): Task[] =>
+			tasks.flatMap((t) => [t, ...flatten(t.children)]);
+		const flat = flatten(this.allTasks);
+
+		// Today count — from vault scan
+		const todayCount = flat.filter(
+			(t) =>
+				t.status !== 'bookmark' &&
+				t.status !== 'migrated' &&
+				(t.scheduled === today || t.due === today),
+		).length;
+		if (this.todayCount) this.todayCount.setText(String(todayCount));
+
+		// Overdue count — from vault scan, use this to show/hide section
+		const overdueCount = flat.filter(
+			(t) =>
+				t.status !== 'done' &&
+				t.status !== 'migrated' &&
+				t.status !== 'bookmark' &&
+				((t.scheduled && t.scheduled < today) || (t.due && t.due < today)),
+		).length;
+
+		if (this.overdueSection) {
+			this.overdueSection.style.display = overdueCount > 0 ? '' : 'none';
+		}
+		if (this.overdueCount) this.overdueCount.setText(String(overdueCount));
 	}
 
 	// ── Link interception ───────────────────────────────
@@ -198,10 +229,23 @@ export class TasksSidebarView extends ItemView {
 
 	private renderQuickAdd(container: HTMLElement) {
 		const wrap = container.createEl('div', { cls: 'tasks-view-quick-add' });
-		const input = wrap.createEl('input', {
+
+		const topRow = wrap.createEl('div', { cls: 'tasks-view-quick-add-top' });
+		const input = topRow.createEl('input', {
 			cls: 'tasks-view-quick-add-input',
 			attr: { placeholder: 'Add to inbox…', type: 'text' },
 		}) as HTMLInputElement;
+
+		const settingsLink = topRow.createEl('span', {
+			cls: 'tasks-view-settings-link',
+			text: 'Settings',
+		});
+		settingsLink.addEventListener('click', () => {
+			// @ts-expect-error — accessing internal settings API
+			this.app.setting.open();
+			// @ts-expect-error — accessing internal settings API
+			this.app.setting.openTabById('obsidian-task-views');
+		});
 
 		input.addEventListener('keydown', async (e) => {
 			if (e.key === 'Enter') {

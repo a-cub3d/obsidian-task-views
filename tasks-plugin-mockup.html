@@ -1,0 +1,1610 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Obsidian Tasks Plugin Mockup</title>
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=DM+Mono:ital,wght@0,300;0,400;0,500;1,300&family=DM+Sans:ital,opsz,wght@0,9..40,300;0,9..40,400;0,9..40,500;1,9..40,300&display=swap');
+
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+  :root {
+    /* Obsidian Baseline/Cupertino palette */
+    --bg-primary: #1e1e1e;
+    --bg-secondary: #161616;
+    --bg-tertiary: #252525;
+    --bg-hover: #2a2a2a;
+    --bg-active: #303030;
+    --border: #333333;
+    --border-subtle: #2a2a2a;
+    --text-primary: #dcddde;
+    --text-secondary: #8b8b8b;
+    --text-muted: #555555;
+    --text-faint: #3a3a3a;
+    --accent: #7c6af7;
+    --accent-hover: #8f7ef9;
+    --accent-dim: rgba(124,106,247,0.15);
+    --accent-dim2: rgba(124,106,247,0.08);
+    --green: #4caf86;
+    --green-dim: rgba(76,175,134,0.12);
+    --orange: #e09a5a;
+    --orange-dim: rgba(224,154,90,0.12);
+    --red: #e06c6c;
+    --red-dim: rgba(224,108,108,0.10);
+    --tag-bg: rgba(124,106,247,0.12);
+    --scrollbar: #2e2e2e;
+    --radius: 6px;
+    --radius-sm: 4px;
+    --sidebar-width: 280px;
+  }
+
+  body {
+    font-family: 'DM Sans', sans-serif;
+    background: var(--bg-secondary);
+    color: var(--text-primary);
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+    font-size: 14px;
+  }
+
+  /* ─── TOP NAV ─────────────────────────────────────────── */
+  .top-nav {
+    background: var(--bg-secondary);
+    border-bottom: 1px solid var(--border);
+    padding: 0 20px;
+    height: 44px;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    flex-shrink: 0;
+    position: sticky;
+    top: 0;
+    z-index: 100;
+  }
+
+  .nav-tabs {
+    display: flex;
+    gap: 2px;
+    background: var(--bg-tertiary);
+    padding: 3px;
+    border-radius: var(--radius);
+    border: 1px solid var(--border);
+  }
+
+  .nav-tab {
+    padding: 5px 14px;
+    border-radius: calc(var(--radius) - 1px);
+    font-size: 12px;
+    font-weight: 500;
+    cursor: pointer;
+    color: var(--text-secondary);
+    transition: all 0.15s ease;
+    letter-spacing: 0.01em;
+    border: none;
+    background: none;
+  }
+
+  .nav-tab:hover { color: var(--text-primary); background: var(--bg-hover); }
+  .nav-tab.active {
+    background: var(--accent);
+    color: #fff;
+    box-shadow: 0 1px 4px rgba(124,106,247,0.4);
+  }
+
+  .nav-spacer { flex: 1; }
+
+  .nav-hint {
+    font-size: 11px;
+    color: var(--text-muted);
+    font-family: 'DM Mono', monospace;
+  }
+
+  /* ─── LAYOUT ──────────────────────────────────────────── */
+  .app-layout {
+    display: flex;
+    flex: 1;
+    overflow: hidden;
+    height: calc(100vh - 44px);
+  }
+
+  /* ─── SIDEBAR ─────────────────────────────────────────── */
+  .sidebar {
+    width: var(--sidebar-width);
+    background: var(--bg-secondary);
+    border-right: 1px solid var(--border);
+    display: flex;
+    flex-direction: column;
+    flex-shrink: 0;
+    overflow: hidden;
+  }
+
+  .sidebar-header {
+    padding: 14px 14px 10px;
+    border-bottom: 1px solid var(--border-subtle);
+    flex-shrink: 0;
+  }
+
+  .sidebar-title-row {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: 10px;
+  }
+
+  .sidebar-title {
+    font-size: 11px;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+    color: var(--text-secondary);
+  }
+
+  .sidebar-date {
+    font-size: 11px;
+    color: var(--text-muted);
+    font-family: 'DM Mono', monospace;
+  }
+
+  /* Quick add */
+  .quick-add {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    background: var(--bg-tertiary);
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    padding: 6px 10px;
+    cursor: text;
+    transition: border-color 0.15s;
+  }
+
+  .quick-add:hover { border-color: var(--accent); }
+  .quick-add.focused { border-color: var(--accent); box-shadow: 0 0 0 2px var(--accent-dim); }
+
+  .quick-add-icon {
+    color: var(--text-muted);
+    font-size: 13px;
+    flex-shrink: 0;
+  }
+
+  .quick-add-text {
+    font-size: 12px;
+    color: var(--text-muted);
+    flex: 1;
+  }
+
+  .quick-add-dest {
+    font-size: 10px;
+    font-family: 'DM Mono', monospace;
+    color: var(--text-faint);
+    background: var(--bg-active);
+    padding: 2px 5px;
+    border-radius: 3px;
+  }
+
+  /* Overdue banner */
+  .overdue-banner {
+    margin: 8px 14px 0;
+    padding: 6px 10px;
+    background: var(--red-dim);
+    border: 1px solid rgba(224,108,108,0.2);
+    border-radius: var(--radius-sm);
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    cursor: pointer;
+    transition: background 0.15s;
+  }
+
+  .overdue-banner:hover { background: rgba(224,108,108,0.18); }
+
+  .overdue-label {
+    font-size: 11px;
+    color: var(--red);
+    font-weight: 500;
+    display: flex;
+    align-items: center;
+    gap: 5px;
+  }
+
+  .overdue-count {
+    font-size: 10px;
+    font-family: 'DM Mono', monospace;
+    background: var(--red);
+    color: #fff;
+    padding: 1px 5px;
+    border-radius: 10px;
+  }
+
+  /* Task list */
+  .sidebar-scroll {
+    flex: 1;
+    overflow-y: auto;
+    padding: 8px 0;
+  }
+
+  .sidebar-scroll::-webkit-scrollbar { width: 3px; }
+  .sidebar-scroll::-webkit-scrollbar-track { background: transparent; }
+  .sidebar-scroll::-webkit-scrollbar-thumb { background: var(--scrollbar); border-radius: 2px; }
+
+  /* Group headers */
+  .task-group {
+    margin-bottom: 4px;
+  }
+
+  .group-header {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    padding: 5px 14px 3px;
+    cursor: pointer;
+    user-select: none;
+  }
+
+  .group-chevron {
+    font-size: 9px;
+    color: var(--text-muted);
+    transition: transform 0.15s;
+    flex-shrink: 0;
+  }
+
+  .group-chevron.collapsed { transform: rotate(-90deg); }
+
+  .group-name {
+    font-size: 11px;
+    font-weight: 500;
+    color: var(--text-secondary);
+    flex: 1;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+  }
+
+  .group-pill {
+    font-size: 10px;
+    font-family: 'DM Mono', monospace;
+    color: var(--text-muted);
+    background: var(--bg-active);
+    padding: 1px 6px;
+    border-radius: 10px;
+  }
+
+  /* Task item */
+  .task-item {
+    display: flex;
+    align-items: flex-start;
+    gap: 8px;
+    padding: 5px 14px 5px 22px;
+    cursor: pointer;
+    border-radius: 0;
+    transition: background 0.1s;
+    position: relative;
+  }
+
+  .task-item:hover { background: var(--bg-hover); }
+  .task-item:hover .task-actions { opacity: 1; }
+  .task-item.done .task-text { text-decoration: line-through; color: var(--text-muted); }
+
+  .task-check {
+    width: 14px;
+    height: 14px;
+    border: 1.5px solid var(--border);
+    border-radius: 3px;
+    flex-shrink: 0;
+    margin-top: 2px;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: all 0.15s;
+    background: transparent;
+  }
+
+  .task-check:hover { border-color: var(--accent); background: var(--accent-dim); }
+  .task-check.checked { background: var(--accent); border-color: var(--accent); }
+  .task-check.checked::after { content: '✓'; font-size: 9px; color: #fff; font-weight: 700; }
+
+  .task-body { flex: 1; min-width: 0; }
+
+  .task-text {
+    font-size: 13px;
+    line-height: 1.4;
+    color: var(--text-primary);
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
+
+  .task-meta {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    margin-top: 2px;
+    flex-wrap: wrap;
+  }
+
+  .task-date {
+    font-size: 10px;
+    font-family: 'DM Mono', monospace;
+    color: var(--text-muted);
+    display: flex;
+    align-items: center;
+    gap: 3px;
+  }
+
+  .task-date.due { color: var(--orange); }
+  .task-date.overdue { color: var(--red); }
+
+  .task-recur {
+    font-size: 10px;
+    color: var(--text-muted);
+  }
+
+  .task-actions {
+    display: flex;
+    gap: 2px;
+    opacity: 0;
+    transition: opacity 0.15s;
+    flex-shrink: 0;
+  }
+
+  .task-action-btn {
+    width: 20px;
+    height: 20px;
+    border: none;
+    background: none;
+    color: var(--text-muted);
+    cursor: pointer;
+    border-radius: 3px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 11px;
+    transition: all 0.1s;
+  }
+
+  .task-action-btn:hover { background: var(--bg-active); color: var(--text-primary); }
+
+  /* Stats row */
+  .sidebar-stats {
+    padding: 8px 14px;
+    border-top: 1px solid var(--border-subtle);
+    display: flex;
+    gap: 12px;
+    flex-shrink: 0;
+  }
+
+  .stat-item {
+    display: flex;
+    align-items: center;
+    gap: 5px;
+  }
+
+  .stat-dot {
+    width: 6px;
+    height: 6px;
+    border-radius: 50%;
+  }
+
+  .stat-dot.done { background: var(--green); }
+  .stat-dot.pending { background: var(--accent); }
+  .stat-dot.overdue { background: var(--red); }
+
+  .stat-label {
+    font-size: 10px;
+    font-family: 'DM Mono', monospace;
+    color: var(--text-muted);
+  }
+
+  /* Progress bar */
+  .progress-wrap {
+    padding: 0 14px 10px;
+    flex-shrink: 0;
+  }
+
+  .progress-bar {
+    height: 2px;
+    background: var(--bg-active);
+    border-radius: 2px;
+    overflow: hidden;
+  }
+
+  .progress-fill {
+    height: 100%;
+    background: linear-gradient(90deg, var(--accent), var(--green));
+    border-radius: 2px;
+    transition: width 0.4s ease;
+  }
+
+  /* ─── MAIN WEEK VIEW ──────────────────────────────────── */
+  .main-view {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    overflow: hidden;
+    background: var(--bg-primary);
+  }
+
+  .week-header {
+    padding: 12px 20px;
+    border-bottom: 1px solid var(--border);
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    flex-shrink: 0;
+    background: var(--bg-primary);
+  }
+
+  .week-nav {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+  }
+
+  .week-nav-btn {
+    width: 26px;
+    height: 26px;
+    border: 1px solid var(--border);
+    background: var(--bg-tertiary);
+    color: var(--text-secondary);
+    border-radius: var(--radius-sm);
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 12px;
+    transition: all 0.15s;
+  }
+
+  .week-nav-btn:hover { border-color: var(--accent); color: var(--accent); }
+
+  .week-label {
+    font-size: 13px;
+    font-weight: 500;
+    color: var(--text-primary);
+    min-width: 160px;
+    text-align: center;
+    font-family: 'DM Mono', monospace;
+  }
+
+  .week-today-btn {
+    padding: 4px 10px;
+    border: 1px solid var(--border);
+    background: var(--bg-tertiary);
+    color: var(--text-secondary);
+    border-radius: var(--radius-sm);
+    cursor: pointer;
+    font-size: 11px;
+    font-family: 'DM Sans', sans-serif;
+    transition: all 0.15s;
+  }
+
+  .week-today-btn:hover { border-color: var(--accent); color: var(--accent); }
+
+  .week-filter-row {
+    margin-left: auto;
+    display: flex;
+    align-items: center;
+    gap: 6px;
+  }
+
+  .filter-chip {
+    padding: 3px 10px;
+    border: 1px solid var(--border);
+    background: var(--bg-tertiary);
+    color: var(--text-secondary);
+    border-radius: 20px;
+    font-size: 11px;
+    cursor: pointer;
+    transition: all 0.15s;
+  }
+
+  .filter-chip:hover { border-color: var(--accent); color: var(--accent); }
+  .filter-chip.active { background: var(--accent-dim); border-color: var(--accent); color: var(--accent); }
+
+  /* Week grid */
+  .week-grid {
+    flex: 1;
+    display: grid;
+    grid-template-columns: repeat(7, 1fr);
+    gap: 0;
+    overflow: hidden;
+  }
+
+  .day-col {
+    border-right: 1px solid var(--border-subtle);
+    display: flex;
+    flex-direction: column;
+    overflow: hidden;
+  }
+
+  .day-col:last-child { border-right: none; }
+
+  .day-col-header {
+    padding: 10px 10px 8px;
+    border-bottom: 1px solid var(--border-subtle);
+    flex-shrink: 0;
+    text-align: center;
+    background: var(--bg-primary);
+  }
+
+  .day-name {
+    font-size: 10px;
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+    color: var(--text-muted);
+    font-weight: 600;
+    margin-bottom: 4px;
+  }
+
+  .day-num {
+    font-size: 20px;
+    font-weight: 300;
+    color: var(--text-secondary);
+    line-height: 1;
+    font-family: 'DM Mono', monospace;
+  }
+
+  .day-col.today .day-num {
+    color: #fff;
+    background: var(--accent);
+    width: 32px;
+    height: 32px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 15px;
+    font-weight: 500;
+    margin: 0 auto;
+  }
+
+  .day-col.today .day-name { color: var(--accent); }
+
+  .day-task-count {
+    font-size: 10px;
+    font-family: 'DM Mono', monospace;
+    color: var(--text-faint);
+    margin-top: 4px;
+  }
+
+  .day-task-count.has-tasks { color: var(--text-muted); }
+
+  .day-col-body {
+    flex: 1;
+    overflow-y: auto;
+    padding: 6px 4px;
+  }
+
+  .day-col-body::-webkit-scrollbar { width: 2px; }
+  .day-col-body::-webkit-scrollbar-track { background: transparent; }
+  .day-col-body::-webkit-scrollbar-thumb { background: var(--scrollbar); }
+
+  /* Week task card */
+  .week-task {
+    background: var(--bg-tertiary);
+    border: 1px solid var(--border-subtle);
+    border-radius: var(--radius-sm);
+    padding: 6px 8px;
+    margin-bottom: 4px;
+    cursor: grab;
+    transition: all 0.15s;
+    position: relative;
+    overflow: hidden;
+  }
+
+  .week-task::before {
+    content: '';
+    position: absolute;
+    left: 0; top: 0; bottom: 0;
+    width: 2px;
+    background: var(--accent);
+    opacity: 0.5;
+  }
+
+  .week-task:hover {
+    background: var(--bg-hover);
+    border-color: var(--accent);
+    transform: translateY(-1px);
+    box-shadow: 0 2px 8px rgba(0,0,0,0.3);
+    z-index: 1;
+  }
+
+  .week-task:hover::before { opacity: 1; }
+
+  .week-task.dragging {
+    opacity: 0.5;
+    cursor: grabbing;
+  }
+
+  .week-task.done { opacity: 0.45; }
+  .week-task.done .week-task-text { text-decoration: line-through; }
+
+  .week-task-top {
+    display: flex;
+    align-items: flex-start;
+    gap: 5px;
+  }
+
+  .week-task-check {
+    width: 12px;
+    height: 12px;
+    border: 1.5px solid var(--border);
+    border-radius: 2px;
+    flex-shrink: 0;
+    margin-top: 2px;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: all 0.15s;
+  }
+
+  .week-task-check:hover { border-color: var(--accent); background: var(--accent-dim); }
+  .week-task-check.checked { background: var(--accent); border-color: var(--accent); }
+  .week-task-check.checked::after { content: '✓'; font-size: 8px; color: #fff; font-weight: 700; }
+
+  .week-task-text {
+    font-size: 11.5px;
+    line-height: 1.35;
+    color: var(--text-primary);
+    flex: 1;
+    word-break: break-word;
+  }
+
+  .week-task-footer {
+    display: flex;
+    align-items: center;
+    gap: 4px;
+    margin-top: 4px;
+  }
+
+  .week-task-source {
+    font-size: 9.5px;
+    color: var(--text-faint);
+    font-family: 'DM Mono', monospace;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+    flex: 1;
+  }
+
+  .week-task-recur {
+    font-size: 10px;
+    color: var(--text-muted);
+    flex-shrink: 0;
+  }
+
+  /* Drop zone */
+  .drop-zone {
+    border: 1.5px dashed var(--border);
+    border-radius: var(--radius-sm);
+    padding: 8px;
+    margin-bottom: 4px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    transition: all 0.15s;
+    opacity: 0;
+  }
+
+  .drop-zone.visible { opacity: 1; }
+  .drop-zone:hover, .drop-zone.active {
+    border-color: var(--accent);
+    background: var(--accent-dim2);
+  }
+
+  .drop-zone-text {
+    font-size: 10px;
+    color: var(--text-faint);
+  }
+
+  /* Add task in day */
+  .day-add-btn {
+    display: flex;
+    align-items: center;
+    gap: 4px;
+    padding: 5px 6px;
+    border-radius: var(--radius-sm);
+    cursor: pointer;
+    opacity: 0;
+    transition: opacity 0.15s;
+    color: var(--text-muted);
+    font-size: 11px;
+  }
+
+  .day-col-body:hover .day-add-btn { opacity: 1; }
+  .day-add-btn:hover { background: var(--bg-hover); color: var(--accent); }
+
+  /* ─── DRAG GHOST ──────────────────────────────────────── */
+  .drag-ghost {
+    position: fixed;
+    pointer-events: none;
+    z-index: 9999;
+    background: var(--bg-tertiary);
+    border: 1px solid var(--accent);
+    border-radius: var(--radius-sm);
+    padding: 6px 8px;
+    font-size: 11.5px;
+    color: var(--text-primary);
+    box-shadow: 0 8px 24px rgba(0,0,0,0.5);
+    max-width: 180px;
+    transform: rotate(2deg);
+    opacity: 0;
+    transition: opacity 0.1s;
+  }
+
+  /* ─── TOOLTIP ─────────────────────────────────────────── */
+  .tooltip {
+    position: fixed;
+    background: var(--bg-tertiary);
+    border: 1px solid var(--border);
+    border-radius: var(--radius-sm);
+    padding: 5px 8px;
+    font-size: 11px;
+    color: var(--text-secondary);
+    pointer-events: none;
+    z-index: 9998;
+    white-space: nowrap;
+    box-shadow: 0 4px 12px rgba(0,0,0,0.4);
+    opacity: 0;
+    transition: opacity 0.1s;
+  }
+
+  /* ─── MODAL ───────────────────────────────────────────── */
+  .modal-overlay {
+    position: fixed;
+    inset: 0;
+    background: rgba(0,0,0,0.6);
+    z-index: 1000;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    opacity: 0;
+    pointer-events: none;
+    transition: opacity 0.2s;
+    backdrop-filter: blur(2px);
+  }
+
+  .modal-overlay.open { opacity: 1; pointer-events: all; }
+
+  .modal {
+    background: var(--bg-tertiary);
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    width: 480px;
+    max-width: 90vw;
+    box-shadow: 0 20px 60px rgba(0,0,0,0.6);
+    transform: translateY(8px) scale(0.98);
+    transition: transform 0.2s ease;
+  }
+
+  .modal-overlay.open .modal { transform: translateY(0) scale(1); }
+
+  .modal-header {
+    padding: 16px 18px 12px;
+    border-bottom: 1px solid var(--border-subtle);
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+  }
+
+  .modal-title {
+    font-size: 13px;
+    font-weight: 600;
+    color: var(--text-primary);
+    display: flex;
+    align-items: center;
+    gap: 7px;
+  }
+
+  .modal-tasks-badge {
+    font-size: 10px;
+    background: var(--accent-dim);
+    color: var(--accent);
+    padding: 2px 6px;
+    border-radius: 10px;
+    font-family: 'DM Mono', monospace;
+  }
+
+  .modal-close {
+    width: 22px;
+    height: 22px;
+    border: none;
+    background: var(--bg-hover);
+    color: var(--text-muted);
+    border-radius: 4px;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 13px;
+    transition: all 0.1s;
+  }
+
+  .modal-close:hover { background: var(--bg-active); color: var(--text-primary); }
+
+  .modal-body { padding: 16px 18px; }
+
+  .modal-field { margin-bottom: 14px; }
+
+  .modal-label {
+    font-size: 10px;
+    text-transform: uppercase;
+    letter-spacing: 0.07em;
+    color: var(--text-muted);
+    font-weight: 600;
+    margin-bottom: 5px;
+  }
+
+  .modal-input {
+    width: 100%;
+    background: var(--bg-secondary);
+    border: 1px solid var(--border);
+    border-radius: var(--radius-sm);
+    padding: 7px 10px;
+    color: var(--text-primary);
+    font-size: 13px;
+    font-family: 'DM Sans', sans-serif;
+    outline: none;
+    transition: border-color 0.15s;
+  }
+
+  .modal-input:focus { border-color: var(--accent); box-shadow: 0 0 0 2px var(--accent-dim); }
+
+  .modal-row {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 10px;
+    margin-bottom: 14px;
+  }
+
+  .modal-footer {
+    padding: 12px 18px;
+    border-top: 1px solid var(--border-subtle);
+    display: flex;
+    gap: 8px;
+    justify-content: flex-end;
+  }
+
+  .btn {
+    padding: 7px 16px;
+    border-radius: var(--radius-sm);
+    font-size: 12px;
+    font-family: 'DM Sans', sans-serif;
+    font-weight: 500;
+    cursor: pointer;
+    transition: all 0.15s;
+    border: none;
+  }
+
+  .btn-ghost {
+    background: transparent;
+    color: var(--text-secondary);
+    border: 1px solid var(--border);
+  }
+
+  .btn-ghost:hover { background: var(--bg-hover); color: var(--text-primary); }
+
+  .btn-primary {
+    background: var(--accent);
+    color: #fff;
+    box-shadow: 0 1px 4px rgba(124,106,247,0.4);
+  }
+
+  .btn-primary:hover { background: var(--accent-hover); box-shadow: 0 2px 8px rgba(124,106,247,0.5); }
+
+  /* ─── ANNOTATIONS ─────────────────────────────────────── */
+  .annotation {
+    position: absolute;
+    font-size: 10px;
+    font-family: 'DM Mono', monospace;
+    color: var(--accent);
+    background: var(--accent-dim);
+    padding: 2px 6px;
+    border-radius: 3px;
+    border: 1px solid rgba(124,106,247,0.3);
+    pointer-events: none;
+    z-index: 50;
+    white-space: nowrap;
+  }
+
+  .annotation-line {
+    position: absolute;
+    background: var(--accent);
+    opacity: 0.4;
+    pointer-events: none;
+    z-index: 49;
+  }
+
+  /* ─── SECTION LABELS ──────────────────────────────────── */
+  .section-label {
+    position: absolute;
+    top: -11px;
+    left: 50%;
+    transform: translateX(-50%);
+    font-size: 9px;
+    font-family: 'DM Mono', monospace;
+    text-transform: uppercase;
+    letter-spacing: 0.1em;
+    color: var(--text-muted);
+    background: var(--bg-secondary);
+    padding: 0 8px;
+    white-space: nowrap;
+  }
+
+  .view-frame {
+    position: relative;
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    overflow: hidden;
+    margin: 24px;
+  }
+
+  .view-frame-label {
+    position: absolute;
+    top: -10px;
+    left: 16px;
+    font-size: 9px;
+    font-family: 'DM Mono', monospace;
+    text-transform: uppercase;
+    letter-spacing: 0.1em;
+    color: var(--accent);
+    background: var(--bg-secondary);
+    padding: 0 6px;
+    z-index: 10;
+  }
+
+  /* ─── DRAG INDICATOR ──────────────────────────────────── */
+  .drag-indicator {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    background: var(--bg-tertiary);
+    border: 1px solid var(--accent);
+    border-radius: var(--radius-sm);
+    padding: 5px 8px;
+    font-size: 11px;
+    color: var(--accent);
+    pointer-events: none;
+    white-space: nowrap;
+    box-shadow: 0 4px 16px rgba(0,0,0,0.5);
+    z-index: 200;
+  }
+</style>
+</head>
+<body>
+
+<!-- ═══════════════════════════════════════════════════════
+     SECTION 1: FULL LAYOUT (SIDEBAR + WEEK VIEW)
+═══════════════════════════════════════════════════════ -->
+
+<div style="padding: 20px 24px 8px; background: var(--bg-secondary);">
+  <div style="font-size: 10px; font-family: 'DM Mono', monospace; text-transform: uppercase; letter-spacing: 0.1em; color: var(--text-muted); margin-bottom: 4px;">Plugin Mockup — Full Layout</div>
+  <div style="font-size: 18px; font-weight: 500; color: var(--text-primary);">Tasks Dashboard</div>
+  <div style="font-size: 12px; color: var(--text-secondary); margin-top: 3px;">Visual reference for Claude Code build</div>
+</div>
+
+<div class="view-frame" style="height: 580px; margin: 16px 24px 24px; display: flex; flex-direction: column;">
+  <div class="view-frame-label">full layout</div>
+
+  <!-- Top nav -->
+  <div class="top-nav">
+    <div class="nav-tabs">
+      <button class="nav-tab active" onclick="switchTab('today', this)">Today</button>
+      <button class="nav-tab" onclick="switchTab('week', this)">Week</button>
+    </div>
+    <div class="nav-spacer"></div>
+    <div class="nav-hint">click tasks to edit · drag to reschedule</div>
+  </div>
+
+  <div class="app-layout" id="mainLayout">
+    <!-- SIDEBAR -->
+    <div class="sidebar">
+      <div class="sidebar-header">
+        <div class="sidebar-title-row">
+          <span class="sidebar-title">Today</span>
+          <span class="sidebar-date">Wed Jun 4</span>
+        </div>
+        <!-- Quick add -->
+        <div class="quick-add" id="quickAdd" onclick="focusQuickAdd()">
+          <span class="quick-add-icon">＋</span>
+          <span class="quick-add-text" id="qaText">Add to inbox…</span>
+          <span class="quick-add-dest">📥 Inbox.md</span>
+        </div>
+      </div>
+
+      <!-- Overdue banner -->
+      <div class="overdue-banner" onclick="toggleOverdue()">
+        <span class="overdue-label">⚠ Overdue <span class="overdue-count" id="overdueCount">3</span></span>
+        <span style="font-size: 10px; color: var(--red);" id="overdueToggle">▾ show</span>
+      </div>
+
+      <div class="sidebar-scroll" id="sidebarScroll">
+
+        <!-- Overdue group (collapsed by default) -->
+        <div class="task-group" id="overdueGroup" style="display:none;">
+          <div class="group-header">
+            <span class="group-chevron">▾</span>
+            <span class="group-name" style="color: var(--red);">Overdue</span>
+            <span class="group-pill" style="background: var(--red-dim); color: var(--red);">3</span>
+          </div>
+          <div class="task-item" onclick="openModal('Review Q2 budget report')">
+            <div class="task-check" onclick="event.stopPropagation(); toggleCheck(this)"></div>
+            <div class="task-body">
+              <div class="task-text">Review Q2 budget report</div>
+              <div class="task-meta">
+                <span class="task-date overdue">📅 Jun 1</span>
+              </div>
+            </div>
+            <div class="task-actions">
+              <button class="task-action-btn" title="Edit">✎</button>
+            </div>
+          </div>
+          <div class="task-item" onclick="openModal('Send follow-up email')">
+            <div class="task-check" onclick="event.stopPropagation(); toggleCheck(this)"></div>
+            <div class="task-body">
+              <div class="task-text">Send follow-up email</div>
+              <div class="task-meta"><span class="task-date overdue">📅 Jun 2</span></div>
+            </div>
+            <div class="task-actions"><button class="task-action-btn">✎</button></div>
+          </div>
+        </div>
+
+        <!-- Group: MBA / BUSN 610 -->
+        <div class="task-group">
+          <div class="group-header" onclick="toggleGroup(this)">
+            <span class="group-chevron">▾</span>
+            <span class="group-name">MBA / BUSN 610</span>
+            <span class="group-pill">2</span>
+          </div>
+          <div class="task-item" onclick="openModal('Submit discussion post')">
+            <div class="task-check" onclick="event.stopPropagation(); toggleCheck(this)"></div>
+            <div class="task-body">
+              <div class="task-text">Submit discussion post</div>
+              <div class="task-meta">
+                <span class="task-date due">⏰ due today</span>
+              </div>
+            </div>
+            <div class="task-actions"><button class="task-action-btn">✎</button></div>
+          </div>
+          <div class="task-item done" onclick="openModal('Read chapter 7 notes')">
+            <div class="task-check checked" onclick="event.stopPropagation(); toggleCheck(this)"></div>
+            <div class="task-body">
+              <div class="task-text">Read chapter 7 notes</div>
+              <div class="task-meta"><span class="task-date">✓ done</span></div>
+            </div>
+            <div class="task-actions"><button class="task-action-btn">✎</button></div>
+          </div>
+        </div>
+
+        <!-- Group: Work / Q3 Planning -->
+        <div class="task-group">
+          <div class="group-header" onclick="toggleGroup(this)">
+            <span class="group-chevron">▾</span>
+            <span class="group-name">Work / Q3 Planning</span>
+            <span class="group-pill">3</span>
+          </div>
+          <div class="task-item" onclick="openModal('Update RevOps dashboard metrics')">
+            <div class="task-check" onclick="event.stopPropagation(); toggleCheck(this)"></div>
+            <div class="task-body">
+              <div class="task-text">Update RevOps dashboard metrics</div>
+              <div class="task-meta"><span class="task-date">📅 today</span></div>
+            </div>
+            <div class="task-actions"><button class="task-action-btn">✎</button></div>
+          </div>
+          <div class="task-item" onclick="openModal('Prep for Thursday pipeline review')">
+            <div class="task-check" onclick="event.stopPropagation(); toggleCheck(this)"></div>
+            <div class="task-body">
+              <div class="task-text">Prep for Thursday pipeline review</div>
+              <div class="task-meta">
+                <span class="task-date due">⏰ due today</span>
+                <span class="task-recur">🔁 weekly</span>
+              </div>
+            </div>
+            <div class="task-actions"><button class="task-action-btn">✎</button></div>
+          </div>
+          <div class="task-item" onclick="openModal('Draft June sales email')">
+            <div class="task-check" onclick="event.stopPropagation(); toggleCheck(this)"></div>
+            <div class="task-body">
+              <div class="task-text">Draft June sales email</div>
+              <div class="task-meta"><span class="task-date">📅 today</span></div>
+            </div>
+            <div class="task-actions"><button class="task-action-btn">✎</button></div>
+          </div>
+        </div>
+
+        <!-- Group: Personal -->
+        <div class="task-group">
+          <div class="group-header" onclick="toggleGroup(this)">
+            <span class="group-chevron">▾</span>
+            <span class="group-name">Personal</span>
+            <span class="group-pill">1</span>
+          </div>
+          <div class="task-item done" onclick="openModal('Morning workout')">
+            <div class="task-check checked" onclick="event.stopPropagation(); toggleCheck(this)"></div>
+            <div class="task-body">
+              <div class="task-text">Morning workout</div>
+              <div class="task-meta"><span class="task-date">🔁 daily · done</span></div>
+            </div>
+            <div class="task-actions"><button class="task-action-btn">✎</button></div>
+          </div>
+        </div>
+
+      </div>
+
+      <!-- Progress + stats -->
+      <div class="progress-wrap">
+        <div class="progress-bar">
+          <div class="progress-fill" style="width: 33%;"></div>
+        </div>
+      </div>
+      <div class="sidebar-stats">
+        <div class="stat-item">
+          <div class="stat-dot done"></div>
+          <span class="stat-label">2 done</span>
+        </div>
+        <div class="stat-item">
+          <div class="stat-dot pending"></div>
+          <span class="stat-label">4 pending</span>
+        </div>
+        <div class="stat-item">
+          <div class="stat-dot overdue"></div>
+          <span class="stat-label">3 overdue</span>
+        </div>
+      </div>
+    </div>
+
+    <!-- WEEK VIEW (hidden by default, shown on tab click) -->
+    <div class="main-view" id="weekView">
+      <div class="week-header">
+        <div class="week-nav">
+          <button class="week-nav-btn" onclick="shiftWeek(-1)">‹</button>
+          <span class="week-label" id="weekLabel">Jun 2 – Jun 8, 2025</span>
+          <button class="week-nav-btn" onclick="shiftWeek(1)">›</button>
+        </div>
+        <button class="week-today-btn" onclick="goToday()">Today</button>
+        <div class="week-filter-row">
+          <span class="filter-chip active" onclick="toggleFilter(this)">Scheduled</span>
+          <span class="filter-chip active" onclick="toggleFilter(this)">Due</span>
+          <span class="filter-chip" onclick="toggleFilter(this)">Done</span>
+        </div>
+      </div>
+
+      <div class="week-grid" id="weekGrid">
+        <!-- Rendered by JS -->
+      </div>
+    </div>
+
+    <!-- Today placeholder in main area -->
+    <div class="main-view" id="todayPlaceholder" style="align-items:center; justify-content:center; display:flex; flex-direction:column; gap:8px;">
+      <div style="font-size: 13px; color: var(--text-muted);">Sidebar shows today's tasks</div>
+      <div style="font-size: 11px; color: var(--text-faint); font-family: 'DM Mono', monospace;">Switch to Week tab for the full calendar view</div>
+    </div>
+
+  </div>
+</div>
+
+<!-- ─── TASKS MODAL ────────────────────────────────────── -->
+<div class="modal-overlay" id="modalOverlay" onclick="closeModal(event)">
+  <div class="modal">
+    <div class="modal-header">
+      <div class="modal-title">
+        ✎ Edit Task
+        <span class="modal-tasks-badge">Tasks Plugin Modal</span>
+      </div>
+      <button class="modal-close" onclick="closeModal()">✕</button>
+    </div>
+    <div class="modal-body">
+      <div class="modal-field">
+        <div class="modal-label">Description</div>
+        <input class="modal-input" id="modalDesc" type="text" value="" />
+      </div>
+      <div class="modal-row">
+        <div class="modal-field" style="margin:0;">
+          <div class="modal-label">Due date</div>
+          <input class="modal-input" type="date" />
+        </div>
+        <div class="modal-field" style="margin:0;">
+          <div class="modal-label">Scheduled date</div>
+          <input class="modal-input" type="date" />
+        </div>
+      </div>
+      <div class="modal-row">
+        <div class="modal-field" style="margin:0;">
+          <div class="modal-label">Recurrence</div>
+          <input class="modal-input" type="text" placeholder="every week" />
+        </div>
+        <div class="modal-field" style="margin:0;">
+          <div class="modal-label">Status</div>
+          <select class="modal-input">
+            <option>Todo</option>
+            <option>In Progress</option>
+            <option>Done</option>
+            <option>Cancelled</option>
+          </select>
+        </div>
+      </div>
+      <div style="font-size: 10px; color: var(--text-faint); font-family: 'DM Mono', monospace; margin-top: 4px;">
+        → This modal is provided by the Tasks plugin API
+      </div>
+    </div>
+    <div class="modal-footer">
+      <button class="btn btn-ghost" onclick="closeModal()">Cancel</button>
+      <button class="btn btn-primary">Save Task</button>
+    </div>
+  </div>
+</div>
+
+<!-- Drag ghost -->
+<div class="drag-ghost" id="dragGhost"></div>
+<div class="tooltip" id="tooltip"></div>
+
+<script>
+// ─── DATA ──────────────────────────────────────────────
+const DAYS = ['Sun','Mon','Tue','Wed','Thu','Fri','Sat'];
+const MONTHS = ['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];
+
+const today = new Date(2025, 5, 4); // Jun 4 2025 (Wed)
+let weekOffset = 0;
+
+const sampleTasks = [
+  { id:1, text: 'Update RevOps dashboard metrics', file: 'Work/Q3 Planning', date: new Date(2025,5,2), done: false, recur: null },
+  { id:2, text: 'Submit discussion post', file: 'MBA/BUSN 610', date: new Date(2025,5,3), done: false, recur: null },
+  { id:3, text: 'Review Q2 budget report', file: 'Work/Finance', date: new Date(2025,5,4), done: false, recur: null },
+  { id:4, text: 'Prep for Thursday pipeline review', file: 'Work/Q3 Planning', date: new Date(2025,5,4), done: false, recur: 'weekly' },
+  { id:5, text: 'Draft June sales email', file: 'Work/Marketing', date: new Date(2025,5,4), done: false, recur: null },
+  { id:6, text: 'MBA case study analysis', file: 'MBA/BUSN 620', date: new Date(2025,5,5), done: false, recur: null },
+  { id:7, text: 'Morning workout', file: 'Personal/Health', date: new Date(2025,5,5), done: true, recur: 'daily' },
+  { id:8, text: 'Weekly review', file: 'Calendar/Weekly', date: new Date(2025,5,6), done: false, recur: 'weekly' },
+  { id:9, text: 'Send invoice to client', file: 'Work/Finance', date: new Date(2025,5,6), done: false, recur: null },
+  { id:10, text: 'Read chapter 8', file: 'MBA/BUSN 610', date: new Date(2025,5,7), done: false, recur: null },
+  { id:11, text: 'Grocery run', file: 'Personal', date: new Date(2025,5,7), done: false, recur: null },
+  { id:12, text: 'Update sales pipeline in Asana', file: 'Work/RevOps', date: new Date(2025,5,8), done: false, recur: null },
+];
+
+let dragging = null;
+
+// ─── WEEK GRID ─────────────────────────────────────────
+function getWeekStart() {
+  const d = new Date(today);
+  d.setDate(d.getDate() + weekOffset * 7);
+  const day = d.getDay();
+  d.setDate(d.getDate() - day);
+  return d;
+}
+
+function renderWeek() {
+  const grid = document.getElementById('weekGrid');
+  const start = getWeekStart();
+
+  // Update label
+  const end = new Date(start); end.setDate(end.getDate() + 6);
+  document.getElementById('weekLabel').textContent =
+    `${MONTHS[start.getMonth()]} ${start.getDate()} – ${MONTHS[end.getMonth()]} ${end.getDate()}, ${start.getFullYear()}`;
+
+  grid.innerHTML = '';
+
+  for (let i = 0; i < 7; i++) {
+    const d = new Date(start);
+    d.setDate(d.getDate() + i);
+    const isToday = d.toDateString() === today.toDateString();
+    const dayTasks = sampleTasks.filter(t => t.date.toDateString() === d.toDateString());
+
+    const col = document.createElement('div');
+    col.className = 'day-col' + (isToday ? ' today' : '');
+    col.dataset.date = d.toISOString();
+
+    col.innerHTML = `
+      <div class="day-col-header">
+        <div class="day-name">${DAYS[d.getDay()]}</div>
+        <div class="day-num">${d.getDate()}</div>
+        <div class="day-task-count ${dayTasks.length ? 'has-tasks' : ''}">${dayTasks.length ? dayTasks.length + ' task' + (dayTasks.length>1?'s':'') : '·'}</div>
+      </div>
+      <div class="day-col-body" id="dayBody_${i}">
+        ${dayTasks.map(t => renderWeekTask(t)).join('')}
+        <div class="day-add-btn" onclick="openModal('')">＋ <span style="font-size:10px;">add task</span></div>
+      </div>
+    `;
+
+    // Drop zone events
+    col.addEventListener('dragover', e => {
+      e.preventDefault();
+      col.style.background = 'var(--accent-dim2)';
+    });
+    col.addEventListener('dragleave', () => {
+      col.style.background = '';
+    });
+    col.addEventListener('drop', e => {
+      e.preventDefault();
+      col.style.background = '';
+      if (dragging !== null) {
+        const task = sampleTasks.find(t => t.id === dragging);
+        if (task) {
+          task.date = new Date(d);
+          renderWeek();
+          showTooltip(`Rescheduled to ${MONTHS[d.getMonth()]} ${d.getDate()}`, e.clientX, e.clientY);
+        }
+      }
+    });
+
+    grid.appendChild(col);
+  }
+}
+
+function renderWeekTask(t) {
+  const shortFile = t.file.split('/').pop();
+  return `<div class="week-task ${t.done ? 'done' : ''}"
+    draggable="true"
+    data-id="${t.id}"
+    ondragstart="startDrag(event, ${t.id})"
+    ondragend="endDrag()"
+    onclick="openModal('${t.text.replace(/'/g,"\\'")}')">
+    <div class="week-task-top">
+      <div class="week-task-check ${t.done ? 'checked' : ''}"
+        onclick="event.stopPropagation(); toggleWeekCheck(${t.id})">${t.done ? '✓' : ''}</div>
+      <div class="week-task-text">${t.text}</div>
+    </div>
+    <div class="week-task-footer">
+      <div class="week-task-source">${shortFile}</div>
+      ${t.recur ? `<div class="week-task-recur">🔁</div>` : ''}
+    </div>
+  </div>`;
+}
+
+// ─── DRAG ──────────────────────────────────────────────
+function startDrag(e, id) {
+  dragging = id;
+  const task = sampleTasks.find(t => t.id === id);
+  e.target.classList.add('dragging');
+  const ghost = document.getElementById('dragGhost');
+  ghost.textContent = task.text;
+  ghost.style.opacity = '1';
+  e.dataTransfer.effectAllowed = 'move';
+}
+
+function endDrag() {
+  dragging = null;
+  document.querySelectorAll('.week-task.dragging').forEach(el => el.classList.remove('dragging'));
+  document.getElementById('dragGhost').style.opacity = '0';
+}
+
+// ─── TOOLTIP ──────────────────────────────────────────
+function showTooltip(text, x, y) {
+  const t = document.getElementById('tooltip');
+  t.textContent = text;
+  t.style.left = x + 'px';
+  t.style.top = (y - 30) + 'px';
+  t.style.opacity = '1';
+  setTimeout(() => t.style.opacity = '0', 1800);
+}
+
+// ─── MODAL ────────────────────────────────────────────
+function openModal(taskText) {
+  document.getElementById('modalDesc').value = taskText;
+  document.getElementById('modalOverlay').classList.add('open');
+}
+
+function closeModal(e) {
+  if (!e || e.target === document.getElementById('modalOverlay')) {
+    document.getElementById('modalOverlay').classList.remove('open');
+  }
+}
+
+// ─── SIDEBAR INTERACTIONS ─────────────────────────────
+function toggleCheck(el) {
+  el.classList.toggle('checked');
+  const item = el.closest('.task-item');
+  item.classList.toggle('done');
+  if (el.classList.contains('checked')) el.textContent = '';
+}
+
+function toggleWeekCheck(id) {
+  const task = sampleTasks.find(t => t.id === id);
+  if (task) { task.done = !task.done; renderWeek(); }
+}
+
+function toggleGroup(header) {
+  const chevron = header.querySelector('.group-chevron');
+  const group = header.closest('.task-group');
+  const items = group.querySelectorAll('.task-item');
+  const collapsed = chevron.classList.toggle('collapsed');
+  items.forEach(item => item.style.display = collapsed ? 'none' : '');
+}
+
+let overdueVisible = false;
+function toggleOverdue() {
+  overdueVisible = !overdueVisible;
+  document.getElementById('overdueGroup').style.display = overdueVisible ? 'block' : 'none';
+  document.getElementById('overdueToggle').textContent = overdueVisible ? '▴ hide' : '▾ show';
+}
+
+// ─── QUICK ADD ────────────────────────────────────────
+let qaFocused = false;
+function focusQuickAdd() {
+  if (qaFocused) return;
+  qaFocused = true;
+  const qa = document.getElementById('quickAdd');
+  const text = document.getElementById('qaText');
+  qa.classList.add('focused');
+  text.contentEditable = 'true';
+  text.textContent = '';
+  text.style.color = 'var(--text-primary)';
+  text.focus();
+  text.addEventListener('keydown', e => {
+    if (e.key === 'Enter') { blurQuickAdd(); }
+    if (e.key === 'Escape') { blurQuickAdd(); }
+  }, { once: false });
+  text.addEventListener('blur', blurQuickAdd);
+}
+
+function blurQuickAdd() {
+  qaFocused = false;
+  const qa = document.getElementById('quickAdd');
+  const text = document.getElementById('qaText');
+  qa.classList.remove('focused');
+  text.contentEditable = 'false';
+  text.textContent = 'Add to inbox…';
+  text.style.color = 'var(--text-muted)';
+}
+
+// ─── TAB SWITCHING ────────────────────────────────────
+function switchTab(tab, btn) {
+  document.querySelectorAll('.nav-tab').forEach(t => t.classList.remove('active'));
+  btn.classList.add('active');
+  const weekView = document.getElementById('weekView');
+  const todayPlaceholder = document.getElementById('todayPlaceholder');
+  if (tab === 'week') {
+    weekView.style.display = 'flex';
+    todayPlaceholder.style.display = 'none';
+    renderWeek();
+  } else {
+    weekView.style.display = 'none';
+    todayPlaceholder.style.display = 'flex';
+  }
+}
+
+// ─── WEEK NAV ─────────────────────────────────────────
+function shiftWeek(dir) {
+  weekOffset += dir;
+  renderWeek();
+}
+
+function goToday() {
+  weekOffset = 0;
+  renderWeek();
+}
+
+// ─── FILTER CHIPS ─────────────────────────────────────
+function toggleFilter(chip) {
+  chip.classList.toggle('active');
+}
+
+// ─── INIT ─────────────────────────────────────────────
+renderWeek();
+// Hide week view on load, show today state
+document.getElementById('weekView').style.display = 'none';
+</script>
+
+<!-- ═══════════════════════════════════════════════════════
+     SECTION 2: ANNOTATIONS / SPEC NOTES
+═══════════════════════════════════════════════════════ -->
+
+<div style="padding: 24px; background: var(--bg-secondary); border-top: 1px solid var(--border);">
+  <div style="font-size: 10px; font-family: 'DM Mono', monospace; text-transform: uppercase; letter-spacing: 0.1em; color: var(--text-muted); margin-bottom: 16px;">Build Spec Notes</div>
+
+  <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 16px; max-width: 900px;">
+
+    <div style="background: var(--bg-tertiary); border: 1px solid var(--border); border-radius: 8px; padding: 16px;">
+      <div style="font-size: 11px; font-weight: 600; color: var(--accent); margin-bottom: 10px; text-transform: uppercase; letter-spacing: 0.06em;">Sidebar Panel</div>
+      <div style="display: flex; flex-direction: column; gap: 7px;">
+        <div style="display: flex; gap: 8px; align-items: flex-start;">
+          <span style="color: var(--accent); font-size: 12px; flex-shrink: 0;">→</span>
+          <span style="font-size: 12px; color: var(--text-secondary);">Registered as a Leaf/View in Obsidian — persists like a sidebar pane</span>
+        </div>
+        <div style="display: flex; gap: 8px; align-items: flex-start;">
+          <span style="color: var(--accent); font-size: 12px; flex-shrink: 0;">→</span>
+          <span style="font-size: 12px; color: var(--text-secondary);">Group toggle: by note file or by heading within file</span>
+        </div>
+        <div style="display: flex; gap: 8px; align-items: flex-start;">
+          <span style="color: var(--accent); font-size: 12px; flex-shrink: 0;">→</span>
+          <span style="font-size: 12px; color: var(--text-secondary);">Quick add writes a bare task line to Inbox.md (configurable path)</span>
+        </div>
+        <div style="display: flex; gap: 8px; align-items: flex-start;">
+          <span style="color: var(--accent); font-size: 12px; flex-shrink: 0;">→</span>
+          <span style="font-size: 12px; color: var(--text-secondary);">Checkoff calls <code style="font-family: DM Mono; font-size: 10px; background: var(--bg-active); padding: 1px 4px; border-radius: 3px;">executeToggleTaskDoneCommand()</code></span>
+        </div>
+        <div style="display: flex; gap: 8px; align-items: flex-start;">
+          <span style="color: var(--accent); font-size: 12px; flex-shrink: 0;">→</span>
+          <span style="font-size: 12px; color: var(--text-secondary);">Click task text → calls Tasks API modal</span>
+        </div>
+        <div style="display: flex; gap: 8px; align-items: flex-start;">
+          <span style="color: var(--accent); font-size: 12px; flex-shrink: 0;">→</span>
+          <span style="font-size: 12px; color: var(--text-secondary);">Progress bar + stats calculated from today's task count</span>
+        </div>
+      </div>
+    </div>
+
+    <div style="background: var(--bg-tertiary); border: 1px solid var(--border); border-radius: 8px; padding: 16px;">
+      <div style="font-size: 11px; font-weight: 600; color: var(--green); margin-bottom: 10px; text-transform: uppercase; letter-spacing: 0.06em;">Week View</div>
+      <div style="display: flex; flex-direction: column; gap: 7px;">
+        <div style="display: flex; gap: 8px; align-items: flex-start;">
+          <span style="color: var(--green); font-size: 12px; flex-shrink: 0;">→</span>
+          <span style="font-size: 12px; color: var(--text-secondary);">Full window view registered as a separate Leaf</span>
+        </div>
+        <div style="display: flex; gap: 8px; align-items: flex-start;">
+          <span style="color: var(--green); font-size: 12px; flex-shrink: 0;">→</span>
+          <span style="font-size: 12px; color: var(--text-secondary);">7 columns, tasks grouped by scheduled/due date</span>
+        </div>
+        <div style="display: flex; gap: 8px; align-items: flex-start;">
+          <span style="color: var(--green); font-size: 12px; flex-shrink: 0;">→</span>
+          <span style="font-size: 12px; color: var(--text-secondary);">Drag and drop rewrites the date field in the source .md file directly</span>
+        </div>
+        <div style="display: flex; gap: 8px; align-items: flex-start;">
+          <span style="color: var(--green); font-size: 12px; flex-shrink: 0;">→</span>
+          <span style="font-size: 12px; color: var(--text-secondary);">Click card → Tasks plugin modal for full edit</span>
+        </div>
+        <div style="display: flex; gap: 8px; align-items: flex-start;">
+          <span style="color: var(--green); font-size: 12px; flex-shrink: 0;">→</span>
+          <span style="font-size: 12px; color: var(--text-secondary);">Filter chips toggle scheduled vs due date display</span>
+        </div>
+        <div style="display: flex; gap: 8px; align-items: flex-start;">
+          <span style="color: var(--green); font-size: 12px; flex-shrink: 0;">→</span>
+          <span style="font-size: 12px; color: var(--text-secondary);">Works on mobile — columns scroll horizontally</span>
+        </div>
+      </div>
+    </div>
+
+    <div style="background: var(--bg-tertiary); border: 1px solid var(--border); border-radius: 8px; padding: 16px;">
+      <div style="font-size: 11px; font-weight: 600; color: var(--orange); margin-bottom: 10px; text-transform: uppercase; letter-spacing: 0.06em;">Tasks Plugin Integration</div>
+      <div style="display: flex; flex-direction: column; gap: 7px;">
+        <div style="display: flex; gap: 8px; align-items: flex-start;">
+          <span style="color: var(--orange); font-size: 12px; flex-shrink: 0;">→</span>
+          <span style="font-size: 12px; color: var(--text-secondary);"><code style="font-family: DM Mono; font-size: 10px; background: var(--bg-active); padding: 1px 4px; border-radius: 3px;">apiV1.createOrEdit(task, file)</code> — edit modal</span>
+        </div>
+        <div style="display: flex; gap: 8px; align-items: flex-start;">
+          <span style="color: var(--orange); font-size: 12px; flex-shrink: 0;">→</span>
+          <span style="font-size: 12px; color: var(--text-secondary);">Reads all tasks by scanning vault .md files for task syntax</span>
+        </div>
+        <div style="display: flex; gap: 8px; align-items: flex-start;">
+          <span style="color: var(--orange); font-size: 12px; flex-shrink: 0;">→</span>
+          <span style="font-size: 12px; color: var(--text-secondary);">Respects all statuses, recurrence, and emoji date fields</span>
+        </div>
+        <div style="display: flex; gap: 8px; align-items: flex-start;">
+          <span style="color: var(--orange); font-size: 12px; flex-shrink: 0;">→</span>
+          <span style="font-size: 12px; color: var(--text-secondary);">Settings: inbox path, group by (note/heading), default date field (scheduled vs due)</span>
+        </div>
+      </div>
+    </div>
+
+    <div style="background: var(--bg-tertiary); border: 1px solid var(--border); border-radius: 8px; padding: 16px;">
+      <div style="font-size: 11px; font-weight: 600; color: var(--text-secondary); margin-bottom: 10px; text-transform: uppercase; letter-spacing: 0.06em;">Claude Code Prompt Tips</div>
+      <div style="display: flex; flex-direction: column; gap: 7px;">
+        <div style="display: flex; gap: 8px; align-items: flex-start;">
+          <span style="color: var(--text-muted); font-size: 12px; flex-shrink: 0;">→</span>
+          <span style="font-size: 12px; color: var(--text-secondary);">Start with: "scaffold an Obsidian plugin with a sidebar leaf view"</span>
+        </div>
+        <div style="display: flex; gap: 8px; align-items: flex-start;">
+          <span style="color: var(--text-muted); font-size: 12px; flex-shrink: 0;">→</span>
+          <span style="font-size: 12px; color: var(--text-secondary);">Reference this mockup HTML as the visual spec</span>
+        </div>
+        <div style="display: flex; gap: 8px; align-items: flex-start;">
+          <span style="color: var(--text-muted); font-size: 12px; flex-shrink: 0;">→</span>
+          <span style="font-size: 12px; color: var(--text-secondary);">Build Phase 1 (sidebar) before touching the week view</span>
+        </div>
+        <div style="display: flex; gap: 8px; align-items: flex-start;">
+          <span style="color: var(--text-muted); font-size: 12px; flex-shrink: 0;">→</span>
+          <span style="font-size: 12px; color: var(--text-secondary);">Ask Claude Code to use the Obsidian sample plugin repo as the base</span>
+        </div>
+      </div>
+    </div>
+
+  </div>
+</div>
+
+</body>
+</html>

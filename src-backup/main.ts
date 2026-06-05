@@ -70,14 +70,5 @@ export default class TaskViewsPlugin extends Plugin {
 
 	async saveSettings() {
 		await this.saveData(this.settings);
-		this.refreshSidebarView();
-	}
-
-	refreshSidebarView() {
-		const leaves = this.app.workspace.getLeavesOfType(VIEW_TYPE_TASKS_SIDEBAR);
-		for (const leaf of leaves) {
-			const view = leaf.view as import('./view').TasksSidebarView;
-			view.refresh();
-		}
 	}
 }
