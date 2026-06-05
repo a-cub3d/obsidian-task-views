@@ -1,0 +1,373 @@
+/* ── Container ─────────────────────────────────────────── */
+
+.tasks-view-container {
+	display: flex;
+	flex-direction: column;
+	height: 100%;
+	overflow: hidden;
+	color: var(--text-normal);
+	background: var(--background-secondary);
+	font-size: var(--font-ui-small);
+}
+
+/* ── Quick add ─────────────────────────────────────────── */
+
+.tasks-view-quick-add {
+	padding: 8px 10px;
+	border-bottom: 1px solid var(--background-modifier-border);
+	flex-shrink: 0;
+	display: flex;
+	flex-direction: column;
+	gap: 4px;
+}
+
+.tasks-view-quick-add-input {
+	width: 100%;
+	background: var(--background-primary);
+	border: 1px solid var(--background-modifier-border);
+	border-radius: 4px;
+	padding: 6px 8px;
+	color: var(--text-normal);
+	font-size: var(--font-ui-small);
+	outline: none;
+	box-sizing: border-box;
+}
+
+.tasks-view-quick-add-input:focus {
+	border-color: var(--interactive-accent);
+}
+
+.tasks-view-quick-add-label {
+	font-size: var(--font-ui-smaller);
+	color: var(--text-faint);
+	padding-left: 2px;
+}
+
+/* ── Scroll area ───────────────────────────────────────── */
+
+.tasks-view-scroll {
+	flex: 1;
+	overflow-y: auto;
+	padding: 4px 0 8px;
+	scrollbar-width: thin;
+	scrollbar-color: var(--scrollbar-thumb-bg) transparent;
+}
+
+.tasks-view-scroll::-webkit-scrollbar {
+	width: 3px;
+}
+.tasks-view-scroll::-webkit-scrollbar-track {
+	background: transparent;
+}
+.tasks-view-scroll::-webkit-scrollbar-thumb {
+	background: var(--scrollbar-thumb-bg);
+	border-radius: 2px;
+}
+
+/* ── Empty state ───────────────────────────────────────── */
+
+.tasks-view-empty {
+	display: flex;
+	flex-direction: column;
+	align-items: center;
+	justify-content: center;
+	padding: 40px 16px;
+	gap: 8px;
+	color: var(--text-faint);
+}
+
+.tasks-view-empty-icon {
+	font-size: 1.6em;
+	opacity: 0.4;
+}
+
+/* ── Overdue banner ────────────────────────────────────── */
+
+.tasks-view-overdue-banner {
+	margin: 4px 6px 6px;
+	border-radius: 6px;
+	border: 1px solid var(--color-red);
+	overflow: hidden;
+}
+
+.tasks-view-overdue-header {
+	display: flex;
+	align-items: center;
+	gap: 4px;
+	padding: 5px 10px 5px 6px;
+	cursor: pointer;
+	user-select: none;
+	background: color-mix(in srgb, var(--color-red) 10%, transparent);
+}
+
+.tasks-view-overdue-header:hover {
+	background: color-mix(in srgb, var(--color-red) 16%, transparent);
+}
+
+.tasks-view-overdue-label {
+	flex: 1;
+	font-weight: 600;
+	font-size: var(--font-ui-small);
+	color: var(--color-red);
+}
+
+.tasks-view-overdue-count {
+	font-size: var(--font-ui-smaller);
+	color: var(--color-red);
+	background: color-mix(in srgb, var(--color-red) 15%, transparent);
+	border-radius: 10px;
+	padding: 1px 7px;
+}
+
+.tasks-view-overdue-body.is-collapsed {
+	display: none;
+}
+
+.tasks-view-overdue-body .tasks-view-task-item {
+	padding-left: 12px;
+}
+
+/* ── Groups ────────────────────────────────────────────── */
+
+.tasks-view-group {
+	margin-bottom: 2px;
+}
+
+.tasks-view-group-header {
+	display: flex;
+	align-items: center;
+	gap: 4px;
+	padding: 5px 10px 5px 6px;
+	cursor: pointer;
+	border-radius: 4px;
+	user-select: none;
+}
+
+.tasks-view-group-header:hover {
+	background: var(--background-modifier-hover);
+}
+
+.tasks-view-group-chevron {
+	color: var(--text-muted);
+	flex-shrink: 0;
+	width: 16px;
+	height: 16px;
+	display: flex;
+	align-items: center;
+	justify-content: center;
+}
+
+.tasks-view-group-name {
+	flex: 1;
+	font-weight: 600;
+	font-size: var(--font-ui-small);
+	color: var(--text-normal);
+	overflow: hidden;
+	text-overflow: ellipsis;
+	white-space: nowrap;
+}
+
+.tasks-view-group-count {
+	font-size: var(--font-ui-smaller);
+	color: var(--text-muted);
+	background: var(--background-secondary);
+	border-radius: 10px;
+	padding: 1px 7px;
+	flex-shrink: 0;
+}
+
+.tasks-view-group-body.is-collapsed {
+	display: none;
+}
+
+/* ── Task items ────────────────────────────────────────── */
+
+.tasks-view-task-item {
+	display: flex;
+	align-items: flex-start;
+	gap: 6px;
+	padding: 5px 8px 5px 12px;
+	border-radius: 4px;
+	min-height: 44px;
+}
+
+.tasks-view-task-item:hover {
+	background: var(--background-modifier-hover);
+}
+
+.tasks-view-task-item.is-done {
+	opacity: 0.5;
+}
+
+.tasks-view-task-checkbox {
+	flex-shrink: 0;
+	display: flex;
+	align-items: center;
+	padding-top: 2px;
+}
+
+.tasks-view-task-checkbox input[type="checkbox"] {
+	cursor: pointer;
+	width: 15px;
+	height: 15px;
+	margin: 0;
+}
+
+.tasks-view-task-content {
+	flex: 1;
+	min-width: 0;
+	display: flex;
+	flex-direction: column;
+	gap: 2px;
+}
+
+.tasks-view-task-description {
+	font-size: var(--font-ui-small);
+	color: var(--text-normal);
+	overflow: hidden;
+	text-overflow: ellipsis;
+	white-space: nowrap;
+}
+
+.tasks-view-task-item.is-done .tasks-view-task-description {
+	text-decoration: line-through;
+	color: var(--text-faint);
+}
+
+.tasks-view-task-meta {
+	display: flex;
+	align-items: center;
+	flex-wrap: wrap;
+	gap: 6px;
+}
+
+.tasks-view-task-date,
+.tasks-view-task-recurrence {
+	font-size: var(--font-ui-smaller);
+	color: var(--text-muted);
+}
+
+.tasks-view-task-date.is-due-today {
+	color: var(--color-orange);
+}
+
+.tasks-view-task-date.is-overdue {
+	color: var(--color-red);
+}
+
+/* ── Task action buttons ───────────────────────────────── */
+
+.tasks-view-task-actions {
+	display: flex;
+	align-items: center;
+	gap: 2px;
+	flex-shrink: 0;
+	padding-top: 1px;
+}
+
+.tasks-view-task-action-btn {
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	width: 22px;
+	height: 22px;
+	border-radius: 4px;
+	color: var(--text-muted);
+	cursor: pointer;
+	opacity: 0.6;
+}
+
+.tasks-view-task-action-btn:hover {
+	background: var(--background-modifier-hover);
+	color: var(--text-normal);
+	opacity: 1;
+}
+
+/* ── Bookmark items ────────────────────────────────────── */
+
+.tasks-view-bookmark-item {
+	display: flex;
+	align-items: center;
+	gap: 6px;
+	padding: 3px 8px 3px 32px;
+	color: var(--text-muted);
+	font-size: var(--font-ui-smaller);
+	min-height: 28px;
+}
+
+.tasks-view-bookmark-icon {
+	flex-shrink: 0;
+	font-size: 0.85em;
+}
+
+.tasks-view-bookmark-text {
+	overflow: hidden;
+	text-overflow: ellipsis;
+	white-space: nowrap;
+}
+
+/* ── Stats bar ─────────────────────────────────────────── */
+
+.tasks-view-stats {
+	flex-shrink: 0;
+	padding: 8px 10px 36px;
+	border-top: 1px solid var(--background-modifier-border);
+	display: flex;
+	flex-direction: column;
+	gap: 6px;
+	margin-bottom: env(safe-area-inset-bottom, 0px);
+}
+
+.tasks-view-progress-bar {
+	height: 8px;
+	background: var(--background-modifier-border);
+	border-radius: 99px;
+	overflow: hidden;
+}
+
+.tasks-view-progress-fill {
+	height: 100%;
+	background: linear-gradient(to right, var(--interactive-accent), var(--color-green));
+	border-radius: 99px;
+	transition: width 0.3s ease;
+}
+
+.tasks-view-stat-pills {
+	display: flex;
+	gap: 6px;
+	justify-content: center;
+}
+
+.tasks-view-stat-pill {
+	font-size: var(--font-ui-smaller);
+	color: var(--text-muted);
+	background: var(--background-modifier-border);
+	border-radius: 10px;
+	padding: 2px 10px;
+}
+
+.tasks-view-stat-pill.is-overdue {
+	color: var(--color-red);
+}
+
+/* ── Placeholder ───────────────────────────────────────── */
+
+.tasks-view-placeholder {
+	display: flex;
+	flex-direction: column;
+	align-items: center;
+	justify-content: center;
+	height: 100%;
+	gap: 8px;
+	color: var(--text-muted);
+}
+
+.tasks-view-placeholder-icon {
+	font-size: 2em;
+	opacity: 0.4;
+}
+
+.tasks-view-placeholder-sub {
+	font-size: var(--font-ui-smaller);
+	color: var(--text-faint);
+}
