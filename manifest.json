@@ -1,6 +1,6 @@
 {
 	"id": "obsidian-task-views",
-	"name": "Obsidian Task Views",
+	"name": "Task Views",
 	"version": "1.0.0",
 	"minAppVersion": "1.0.0",
 	"description": "A better UI for visualizing and interacting with tasks managed by the Tasks plugin.",

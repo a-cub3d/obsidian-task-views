@@ -27,6 +27,7 @@ export class TasksSidebarView extends ItemView {
 	private pillDone: HTMLElement | null = null;
 	private pillPending: HTMLElement | null = null;
 	private pillOverdue: HTMLElement | null = null;
+	private pillInProgress: HTMLElement | null = null;
 
 	constructor(leaf: WorkspaceLeaf, plugin: TaskViewsPlugin) {
 		super(leaf);
@@ -283,6 +284,7 @@ export class TasksSidebarView extends ItemView {
 		this.progressFill.style.width = '0%';
 		const pills = statsEl.createEl('div', { cls: 'tasks-view-stat-pills' });
 		this.pillDone = pills.createEl('span', { cls: 'tasks-view-stat-pill tasks-view-stat-pill--done', text: '0 done' });
+		this.pillInProgress = pills.createEl('span', { cls: 'tasks-view-stat-pill tasks-view-stat-pill--in-progress', text: '0 in progress' });
 		this.pillPending = pills.createEl('span', { cls: 'tasks-view-stat-pill tasks-view-stat-pill--pending', text: '0 pending' });
 		this.pillOverdue = pills.createEl('span', { cls: 'tasks-view-stat-pill tasks-view-stat-pill--overdue', text: '0 overdue' });
 	}
@@ -292,18 +294,24 @@ export class TasksSidebarView extends ItemView {
 			tasks.flatMap((t) => [t, ...flatten(t.children)]);
 		const flat = flatten(this.allTasks);
 
-		const todayFlat = flat.filter(
-			(t) => t.status !== 'bookmark' && (t.scheduled === today || t.due === today),
-		);
-		const done = todayFlat.filter((t) => t.status === 'done').length;
-		const inProgress = todayFlat.filter((t) => t.status === 'in-progress').length;
-		const pending = todayFlat.filter((t) => t.status !== 'done' && t.status !== 'migrated').length;
-		const overdue = flat.filter(
+		// Active set = tasks due/scheduled today or overdue, not yet done (the day's workload)
+		const activeSet = flat.filter(
 			(t) =>
-				t.status !== 'done' &&
-				t.status !== 'migrated' &&
 				t.status !== 'bookmark' &&
-				((t.scheduled && t.scheduled < today) || (t.due && t.due < today)),
+				t.status !== 'migrated' &&
+				t.status !== 'done' &&
+				((t.scheduled && t.scheduled <= today) || (t.due && t.due <= today)),
+		);
+
+		// Done = completed today (completion date stamp is today)
+		const done = flat.filter(
+			(t) => t.status === 'done' && t.completionDate === today,
+		).length;
+		const inProgress = activeSet.filter((t) => t.status === 'in-progress').length;
+		const pending = activeSet.length;
+		const overdue = activeSet.filter(
+			(t) =>
+				(t.scheduled && t.scheduled < today) || (t.due && t.due < today),
 		).length;
 
 		const total = done + pending;
@@ -312,9 +320,8 @@ export class TasksSidebarView extends ItemView {
 
 		if (this.progressFill) this.progressFill.style.width = `${pct}%`;
 		if (this.pillDone) this.pillDone.setText(`${done} done`);
+		if (this.pillInProgress) this.pillInProgress.setText(`${inProgress} in progress`);
 		if (this.pillPending) this.pillPending.setText(`${pending} pending`);
-		if (this.pillOverdue) {
-			this.pillOverdue.setText(`${overdue} overdue`);
-		}
+		if (this.pillOverdue) this.pillOverdue.setText(`${overdue} overdue`);
 	}
 }

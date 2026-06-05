@@ -103,7 +103,7 @@
 }
 
 .tasks-view-section-body {
-	padding: 0 8px 4px 12px;
+	padding: 0 8px 4px 8px;
 }
 
 .tasks-view-section-body.is-collapsed {
@@ -402,9 +402,10 @@
 
 .tasks-view-progress-bar {
 	height: 8px;
-	background: color-mix(in srgb, var(--color-green) 20%, var(--background-modifier-border));
+	background: var(--background-modifier-border);
 	border-radius: 99px;
 	overflow: hidden;
+	box-shadow: inset 0 0 0 1px color-mix(in srgb, var(--color-green) 30%, transparent);
 }
 
 .tasks-view-progress-fill {
@@ -430,17 +431,22 @@
 
 .tasks-view-stat-pill--done {
 	background: color-mix(in srgb, var(--color-green) 18%, transparent);
-	color: var(--color-green);
+	color: color-mix(in srgb, var(--color-green) 70%, var(--text-normal));
+}
+
+.tasks-view-stat-pill--in-progress {
+	background: color-mix(in srgb, var(--color-blue) 18%, transparent);
+	color: color-mix(in srgb, var(--color-blue) 88%, var(--text-normal));
 }
 
 .tasks-view-stat-pill--pending {
 	background: color-mix(in srgb, var(--color-orange) 18%, transparent);
-	color: var(--color-orange);
+	color: color-mix(in srgb, var(--color-orange) 88%, var(--text-normal));
 }
 
 .tasks-view-stat-pill--overdue {
 	background: color-mix(in srgb, var(--color-red) 18%, transparent);
-	color: var(--color-red);
+	color: color-mix(in srgb, var(--color-red) 88%, var(--text-normal));
 }
 
 /* ── Placeholder ───────────────────────────────────────── */
@@ -463,4 +469,37 @@
 .tasks-view-placeholder-sub {
 	font-size: var(--font-ui-smaller);
 	color: var(--text-faint);
+}
+
+/* ── Tasks query output ──────────────────────────────── */
+
+/* The Tasks plugin wraps everything in .block-language-tasks */
+.tasks-view-section-body .block-language-tasks {
+	padding-left: 20px;
+}
+
+/* Group headings ("Module 3 Inventory Management") */
+.tasks-view-section-body .tasks-group-heading {
+	margin: 6px 0 2px;
+	padding: 0;
+	font-size: var(--font-ui-small);
+	font-weight: 600;
+}
+
+/* Task list — keep default ul indent */
+.tasks-view-section-body .contains-task-list {
+	margin: 0 0 4px;
+}
+
+/* Individual task items */
+.tasks-view-section-body .task-list-item {
+	padding: 2px 0;
+	line-height: 1.5;
+}
+
+/* Task count footer ("5 tasks") */
+.tasks-view-section-body .tasks-count {
+	font-size: var(--font-ui-smaller);
+	color: var(--text-faint);
+	margin: 2px 0 6px;
 }
