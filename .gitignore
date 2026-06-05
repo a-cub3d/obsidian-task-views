@@ -1,2 +1,12 @@
 node_modules/
 .DS_Store
+
+# Internal dev files
+CLAUDE.md
+AGENTS.md
+.claude/
+src-backup/
+tab-mockup.html
+mockup-sections.html
+tasks-plugin-mockup.html
+obsidian-tasks-view-spec.md

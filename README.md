@@ -1,92 +1,115 @@
-# Obsidian Sample Plugin
+# Task Views
 
-This is a sample plugin for Obsidian (https://obsidian.md).
+A better UI for visualizing and interacting with tasks in [Obsidian](https://obsidian.md), built on top of the [Tasks plugin](https://github.com/obsidian-tasks-group/obsidian-tasks).
 
-This project uses TypeScript to provide type checking and documentation.
-The repo depends on the latest plugin API (obsidian.d.ts) in TypeScript Definition format, which contains TSDoc comments describing what it does.
+**Task Views is a display layer — it does not replace the Tasks plugin.** All task logic, editing, and completion is handled by Tasks. This plugin adds a focused sidebar view with tabs, quick add, and daily progress tracking.
 
-This sample plugin demonstrates some of the basic functionality the plugin API can do.
+---
 
-- Adds a ribbon icon, which shows a Notice when clicked.
-- Adds a command "Open modal (simple)" which opens a Modal.
-- Adds a plugin setting tab to the settings page.
-- Registers a global click event and outputs a Notice on click.
-- Registers a global interval which logs 'setInterval' to the console.
+## Features
 
-## First time developing plugins?
+- **Three-tab sidebar** — Today, Tomorrow, and Backlog views, each with a configurable Tasks query
+- **Today tab** includes an Overdue section (automatically hidden when empty) and a Today section
+- **Quick add** — type a task and press Enter to append it to your inbox file
+- **Daily progress bar** — tracks done, in-progress, pending, and overdue tasks for the current day
+- **Fully configurable queries** — all five sections (Today, Overdue, Tomorrow, Backlog) use standard Tasks plugin query syntax, editable in settings
+- **Collapsible sections** — each section can be collapsed independently
+- **Light and dark mode** — uses Obsidian CSS variables throughout, no hardcoded colors
+- **Mobile compatible**
 
-Quick starting guide for new plugin devs:
+---
 
-- Check if [someone already developed a plugin for what you want](https://obsidian.md/plugins)! There might be an existing plugin similar enough that you can partner up with.
-- Make a copy of this repo as a template with the "Use this template" button (login to GitHub if you don't see it).
-- Clone your repo to a local development folder. For convenience, you can place this folder in your `.obsidian/plugins/your-plugin-name` folder.
-- Install NodeJS, then run `npm i` in the command line under your repo folder.
-- Run `npm run dev` to compile your plugin from `src/main.ts` to `main.js`.
-- Make changes to `src/main.ts` (or create new `.ts` files). Those changes should be automatically compiled into `main.js`.
-- Reload Obsidian to load the new version of your plugin.
-- Enable plugin in settings window.
-- For updates to the Obsidian API run `npm update` in the command line under your repo folder.
+## Requirements
 
-## Releasing new releases
+- [Obsidian](https://obsidian.md) v1.0.0 or later
+- [Tasks plugin](https://obsidian.md/plugins?id=obsidian-tasks-plugin) installed and enabled
 
-- Update your `manifest.json` with your new version number, such as `1.0.1`, and the minimum Obsidian version required for your latest release.
-- Update your `versions.json` file with `"new-plugin-version": "minimum-obsidian-version"` so older versions of Obsidian can download an older version of your plugin that's compatible.
-- Create new GitHub release using your new version number as the "Tag version". Use the exact version number, don't include a prefix `v`. See here for an example: https://github.com/obsidianmd/obsidian-sample-plugin/releases
-- Upload the files `manifest.json`, `main.js`, `styles.css` as binary attachments. Note: The manifest.json file must be in two places, first the root path of your repository and also in the release.
-- Publish the release.
+Task Views will show a warning and refuse to render if the Tasks plugin is not active.
 
-> You can simplify the version bump process by running `npm version patch`, `npm version minor` or `npm version major` after updating `minAppVersion` manually in `manifest.json`.
-> The command will bump version in `manifest.json` and `package.json`, and add the entry for the new version to `versions.json`
+---
 
-## Adding your plugin to the community plugin list
+## Installation
 
-- Check the [plugin guidelines](https://docs.obsidian.md/Plugins/Releasing/Plugin+guidelines).
-- Publish an initial version.
-- Make sure you have a `README.md` file in the root of your repo.
-- Make a pull request at https://github.com/obsidianmd/obsidian-releases to add your plugin.
+### Manual
 
-## How to use
+1. Download `main.js`, `styles.css`, and `manifest.json` from the [latest release](../../releases/latest)
+2. Copy them to `<your vault>/.obsidian/plugins/obsidian-task-views/`
+3. Reload Obsidian and enable **Task Views** in Settings → Community plugins
 
-- Clone this repo.
-- Make sure your NodeJS is at least v18 (`node --version`).
-- `npm i` to install dependencies.
-- `npm run dev` to start compilation in watch mode.
+### From the community plugin list
 
-## Manually installing the plugin
+Not yet listed. Submission pending.
 
-- Copy over `main.js`, `styles.css`, `manifest.json` to your vault `VaultFolder/.obsidian/plugins/your-plugin-id/`.
+---
 
-## Improve code quality with eslint
+## Usage
 
-- [ESLint](https://eslint.org/) is a tool that analyzes your code to quickly find problems. You can run ESLint against your plugin to find common bugs and ways to improve your code.
-- This project already has eslint preconfigured, you can invoke a check by running`npm run lint`
-- Together with a custom eslint [plugin](https://github.com/obsidianmd/eslint-plugin) for Obsidan specific code guidelines.
-- A GitHub action is preconfigured to automatically lint every commit on all branches.
+Open the Task Views sidebar via the ribbon checkmark icon, or via **Command palette → Task Views: Open sidebar**.
 
-## Funding URL
+### Tabs
 
-You can include funding URLs where people who use your plugin can financially support it.
+| Tab | What it shows |
+|---|---|
+| **Today** | Overdue tasks (collapsible, hidden if none) + tasks scheduled or due today |
+| **Tomorrow** | Tasks scheduled or due tomorrow |
+| **Backlog** | Tasks with no scheduled or due date |
 
-The simple way is to set the `fundingUrl` field to your link in your `manifest.json` file:
+### Quick add
 
-```json
-{
-	"fundingUrl": "https://buymeacoffee.com"
-}
+Type in the input at the top and press **Enter** to add a task to your inbox file. The inbox file path is configurable in settings (default: `Inbox.md`).
+
+### Progress bar
+
+The bar and pills at the bottom always reflect your **today's workload** regardless of which tab is active — done, in-progress, pending, and overdue counts for tasks due or scheduled today (or earlier).
+
+---
+
+## Settings
+
+Open settings via the gear icon in the sidebar, or via **Settings → Task Views**.
+
+| Setting | Description |
+|---|---|
+| **Inbox file path** | File that quick-add writes new tasks to |
+| **Excluded folders** | Folders skipped during vault scan (e.g. `System/Templates`) |
+| **Today query** | Tasks plugin query for the Today section |
+| **Overdue query** | Tasks plugin query for the Overdue section |
+| **Tomorrow query** | Tasks plugin query for the Tomorrow section |
+| **Backlog query** | Tasks plugin query for the Backlog section |
+
+All queries use standard [Tasks plugin query syntax](https://publish.obsidian.md/tasks/Queries/About+Queries). Changes take effect when you click **Apply**.
+
+---
+
+## Task syntax supported
+
+Task Views parses the following fields from task lines:
+
+| Symbol | Field |
+|---|---|
+| `⏳ YYYY-MM-DD` | Scheduled date |
+| `📅 YYYY-MM-DD` | Due date |
+| `✅ YYYY-MM-DD` | Completion date |
+| `🔁` | Recurrence rule |
+| `[ ]` `[/]` `[x]` `[>]` | Todo / In Progress / Done / Migrated |
+| `[b]` | Bookmark (rendered indented under parent, never standalone) |
+
+All other fields (priority, created, ID, depends) are parsed silently and ignored in the UI.
+
+---
+
+## Development
+
+```bash
+npm install
+npm run dev      # watch mode
+npm run build    # production build + deploy to vault
 ```
 
-If you have multiple URLs, you can also do:
+The build script auto-deploys to your vault plugin folder via `esbuild.config.mjs`. Update the destination path in that file to match your vault location.
 
-```json
-{
-	"fundingUrl": {
-		"Buy Me a Coffee": "https://buymeacoffee.com",
-		"GitHub Sponsor": "https://github.com/sponsors",
-		"Patreon": "https://www.patreon.com/"
-	}
-}
-```
+---
 
-## API Documentation
+## License
 
-See https://docs.obsidian.md
+[MIT](LICENSE)
