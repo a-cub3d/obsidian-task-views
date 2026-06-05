@@ -4,6 +4,10 @@ A better UI for visualizing and interacting with tasks in [Obsidian](https://obs
 
 **Task Views is a display layer — it does not replace the Tasks plugin.** All task logic, editing, and completion is handled by Tasks. This plugin adds a focused sidebar view with tabs, quick add, and daily progress tracking.
 
+I built this for my own workflow and wanted it to feel as native to the Tasks plugin as possible — no reimplementing what Tasks already does well, just a better surface for seeing and acting on what's due. If it fits your workflow too, great.
+
+![Task Views sidebar](screenshots/Screen%20Shot%202026-06-05%20at%2015.57.52%20PM.png)
+
 ---
 
 ## Features
@@ -12,7 +16,7 @@ A better UI for visualizing and interacting with tasks in [Obsidian](https://obs
 - **Today tab** includes an Overdue section (automatically hidden when empty) and a Today section
 - **Quick add** — type a task and press Enter to append it to your inbox file
 - **Daily progress bar** — tracks done, in-progress, pending, and overdue tasks for the current day
-- **Fully configurable queries** — all five sections (Today, Overdue, Tomorrow, Backlog) use standard Tasks plugin query syntax, editable in settings
+- **Fully configurable queries** — all four sections (Today, Overdue, Tomorrow, Backlog) use standard Tasks plugin query syntax, editable in settings
 - **Collapsible sections** — each section can be collapsed independently
 - **Light and dark mode** — uses Obsidian CSS variables throughout, no hardcoded colors
 - **Mobile compatible**
@@ -21,12 +25,12 @@ A better UI for visualizing and interacting with tasks in [Obsidian](https://obs
 
 ## Requirements
 
-- [Obsidian](https://obsidian.md) — latest version
-- [Tasks plugin](https://obsidian.md/plugins?id=obsidian-tasks-plugin) — latest version, installed and enabled
+- [Obsidian](https://obsidian.md) v1.12.7
+- [Tasks plugin](https://obsidian.md/plugins?id=obsidian-tasks-plugin) v8.0.0, installed and enabled
 
 Task Views will show a warning and refuse to render if the Tasks plugin is not active.
 
-> **Compatibility disclaimer:** This plugin was developed and tested on a MacBook and iPhone running the latest macOS and iOS. It has not been tested on any other platform, Obsidian version, or Tasks plugin version. It may work elsewhere, but there are no guarantees.
+> **Compatibility disclaimer:** Developed and tested on a MacBook and iPhone running the latest macOS and iOS. Only tested against the versions listed above. It may work on other versions and platforms, but there are no guarantees.
 
 ---
 
@@ -40,13 +44,13 @@ Task Views will show a warning and refuse to render if the Tasks plugin is not a
 
 ### From the community plugin list
 
-Not yet listed. Submission pending.
+Not yet listed. Submission planned.
 
 ---
 
 ## Usage
 
-Open the Task Views sidebar via the ribbon checkmark icon, or via **Command palette → Task Views: Open sidebar**.
+Open the Task Views sidebar via the ribbon checkmark icon.
 
 ### Tabs
 
@@ -62,7 +66,18 @@ Type in the input at the top and press **Enter** to add a task to your inbox fil
 
 ### Progress bar
 
-The bar and pills at the bottom always reflect your **today's workload** regardless of which tab is active — done, in-progress, pending, and overdue counts for tasks due or scheduled today (or earlier).
+The bar and pills at the bottom always reflect your **today's workload** regardless of which tab is active.
+
+The workload is defined as all tasks due or scheduled today **or earlier** (overdue tasks count too — they're still your problem today). Completed tasks are only counted if their completion date is today.
+
+Counting logic:
+- **Done** — counts as 1
+- **In progress** (`[/]`) — counts as 0.5
+- **Pending / overdue** — counts as 0 toward progress, but shown in the pending and overdue pills
+
+This means if you use the `[/]` in-progress status, the bar reflects partial progress rather than treating those tasks as either done or not started.
+
+![Settings panel](screenshots/Screen%20Shot%202026-06-05%20at%2016.04.08%20PM.png)
 
 ---
 
@@ -97,6 +112,36 @@ Task Views parses the following fields from task lines:
 | `[b]` | Bookmark (rendered indented under parent, never standalone) |
 
 All other fields (priority, created, ID, depends) are parsed silently and ignored in the UI.
+
+---
+
+## CSS customization
+
+All styles live in `styles.css` and use [Obsidian CSS variables](https://docs.obsidian.md/Reference/CSS+variables/CSS+variables) exclusively. To override any styles, add a CSS snippet in **Settings → Appearance → CSS snippets**.
+
+Key classes:
+
+| Class | What it styles |
+|---|---|
+| `.tasks-view-container` | Outer sidebar wrapper |
+| `.tasks-view-tab-segment` | The tab bar control |
+| `.tasks-view-tab-btn` | Individual tab buttons |
+| `.tasks-view-tab-btn.is-active` | Active tab |
+| `.tasks-view-section-header` | Section header rows (Overdue, Today, etc.) |
+| `.tasks-view-section--overdue` | Overdue section (red accents) |
+| `.tasks-view-stats` | Progress bar + pills container |
+| `.tasks-view-progress-fill` | The filled portion of the progress bar |
+| `.tasks-view-stat-pill--done` | Done pill |
+| `.tasks-view-stat-pill--in-progress` | In progress pill |
+| `.tasks-view-stat-pill--pending` | Pending pill |
+| `.tasks-view-stat-pill--overdue` | Overdue pill |
+
+Example — change the active tab color:
+```css
+.tasks-view-tab-btn.is-active {
+    background: var(--color-purple) !important;
+}
+```
 
 ---
 
