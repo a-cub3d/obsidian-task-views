@@ -100,9 +100,11 @@ All queries use standard [Tasks plugin query syntax](https://publish.obsidian.md
 
 ---
 
-## Task syntax supported
+## Task syntax
 
-Task Views parses the following fields from task lines:
+Since task rendering is handled entirely by the Tasks plugin, **anything Tasks supports will display correctly here** — whatever your version of Tasks renders, and styled however your Obsidian theme styles it.
+
+The following fields are what I use personally, and are the ones this plugin's own parser reads for the progress bar and stats counts:
 
 | Symbol | Field |
 |---|---|
@@ -113,7 +115,7 @@ Task Views parses the following fields from task lines:
 | `[ ]` `[/]` `[x]` `[>]` | Todo / In Progress / Done / Migrated |
 | `[b]` | Bookmark (rendered indented under parent, never standalone) |
 
-All other fields (priority, created, ID, depends) are parsed silently and ignored in the UI.
+All other fields are parsed silently and ignored by the stats logic.
 
 ---
 
