@@ -1,12 +1,14 @@
 # Task Views
 
-A better UI for visualizing and interacting with tasks in [Obsidian](https://obsidian.md), built on top of the [Tasks plugin](https://github.com/obsidian-tasks-group/obsidian-tasks).
+A sidebar view for [Obsidian](https://obsidian.md) that gives you a focused way to see your tasks, built on top of the [Tasks plugin](https://github.com/obsidian-tasks-group/obsidian-tasks).
 
-**Task Views is a display layer — it does not replace the Tasks plugin.** All task logic, editing, and completion is handled by Tasks. This plugin adds a focused sidebar view with tabs, quick add, and daily progress tracking.
+**Task Views is a display layer — it does not replace the Tasks plugin.** All task logic, editing, and completion is handled by Tasks. This plugin adds a sidebar with tabs, quick add, and daily progress tracking.
 
-I built this for my own workflow and wanted it to feel as native to the Tasks plugin as possible — no reimplementing what Tasks already does well, just a better surface for seeing and acting on what's due. If it fits your workflow too, great.
+I built this for my own workflow and wanted it to feel as native to the Tasks plugin as possible — no reimplementing what Tasks already does well, just a cleaner surface for seeing and acting on what's due. If it fits your workflow too, great.
 
-![Task Views sidebar](screenshots/Screen%20Shot%202026-06-05%20at%2015.57.52%20PM.png)
+> **Honest disclaimer:** This was vibe coded. I'm not a developer, I have no plans to maintain this or submit it to the Obsidian community plugin list. I'll update it as I need to for myself and share it here. Use it at your own risk, and don't expect support or updates.
+
+![Task Views sidebar](screenshots/Screen%20Shot%202026-06-05%20at%2016.09.03%20PM.png)
 
 ---
 
@@ -44,7 +46,7 @@ Task Views will show a warning and refuse to render if the Tasks plugin is not a
 
 ### From the community plugin list
 
-Not yet listed. Submission planned.
+Not listed and not planned.
 
 ---
 
