@@ -4,7 +4,7 @@
 	"version": "1.0.0",
 	"minAppVersion": "1.0.0",
 	"description": "A better UI for visualizing and interacting with tasks managed by the Tasks plugin.",
-	"author": "Amanda",
-	"authorUrl": "",
+	"author": "a-cub3d",
+	"authorUrl": "https://github.com/a-cub3d",
 	"isDesktopOnly": false
 }
