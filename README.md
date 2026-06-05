@@ -6,7 +6,7 @@ A sidebar view for [Obsidian](https://obsidian.md) that gives you a focused way 
 
 I built this for my own workflow and wanted it to feel as native to the Tasks plugin as possible — no reimplementing what Tasks already does well, just a cleaner surface for seeing and acting on what's due. If it fits your workflow too, great.
 
-> **Honest disclaimer:** This was vibe coded. I'm not a developer, I have no plans to maintain this or submit it to the Obsidian community plugin list. I'll update it as I need to for myself and share it here. Use it at your own risk, and don't expect support or updates.
+> **Honest disclaimer:** This was vibe coded — I'm not a developer. I built it for my own workflow and I'm sharing it in case it's useful to others. I'll update it as needed for my personal use and I'm not planning to submit it to the community plugin list. Use at your own risk 🙂
 
 ![Task Views sidebar](screenshots/Screen%20Shot%202026-06-05%20at%2016.09.03%20PM.png)
 
