@@ -79,8 +79,6 @@ Counting logic:
 
 This means if you use the `[/]` in-progress status, the bar reflects partial progress rather than treating those tasks as either done or not started.
 
-![Settings panel](screenshots/Screen%20Shot%202026-06-05%20at%2016.04.08%20PM.png)
-
 ---
 
 ## Settings
@@ -97,6 +95,8 @@ Open settings via the gear icon in the sidebar, or via **Settings → Task Views
 | **Backlog query** | Tasks plugin query for the Backlog section |
 
 All queries use standard [Tasks plugin query syntax](https://publish.obsidian.md/tasks/Queries/About+Queries). Changes take effect when you click **Apply**.
+
+![Settings panel](screenshots/Screen%20Shot%202026-06-05%20at%2016.04.08%20PM.png)
 
 ---
 
