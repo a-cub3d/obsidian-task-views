@@ -4,6 +4,8 @@ import { scanVault, Task } from './parser';
 
 export const VIEW_TYPE_TASKS_SIDEBAR = 'tasks-view-sidebar';
 
+type TabId = 'today' | 'tomorrow' | 'backlog';
+
 function getToday(): string {
 	return new Date().toISOString().split('T')[0] as string;
 }
@@ -11,8 +13,13 @@ function getToday(): string {
 export class TasksSidebarView extends ItemView {
 	private plugin: TaskViewsPlugin;
 	private allTasks: Task[] = [];
+	private activeTab: TabId = 'today';
 
-	// Section elements
+	// Tab elements
+	private tabBtns: Record<TabId, HTMLElement> = {} as Record<TabId, HTMLElement>;
+	private tabPanels: Record<TabId, HTMLElement> = {} as Record<TabId, HTMLElement>;
+
+	// Today tab section elements
 	private overdueSection: HTMLElement | null = null;
 	private overdueBody: HTMLElement | null = null;
 	private overdueCount: HTMLElement | null = null;
@@ -21,6 +28,14 @@ export class TasksSidebarView extends ItemView {
 
 	private todayBody: HTMLElement | null = null;
 	private todayCount: HTMLElement | null = null;
+
+	// Tomorrow tab
+	private tomorrowBody: HTMLElement | null = null;
+	private tomorrowCount: HTMLElement | null = null;
+
+	// Backlog tab
+	private backlogBody: HTMLElement | null = null;
+	private backlogCount: HTMLElement | null = null;
 
 	// Stats elements
 	private progressFill: HTMLElement | null = null;
@@ -61,11 +76,52 @@ export class TasksSidebarView extends ItemView {
 		container.addClass('tasks-view-container');
 
 		this.renderQuickAdd(container);
+		this.renderTabs(container);
+		this.buildStatsShell(container);
+	}
 
-		const scroll = container.createEl('div', { cls: 'tasks-view-scroll' });
+	private renderTabs(container: HTMLElement) {
+		// Tab bar
+		const tabBar = container.createEl('div', { cls: 'tasks-view-tab-bar' });
+		const segment = tabBar.createEl('div', { cls: 'tasks-view-tab-segment' });
+		const tabs: { id: TabId; label: string }[] = [
+			{ id: 'today', label: 'Today' },
+			{ id: 'tomorrow', label: 'Tomorrow' },
+			{ id: 'backlog', label: 'Backlog' },
+		];
 
+		for (const { id, label } of tabs) {
+			const btn = segment.createEl('button', { cls: 'tasks-view-tab-btn', text: label });
+			if (id === this.activeTab) btn.addClass('is-active');
+			btn.addEventListener('click', () => this.switchTab(id));
+			this.tabBtns[id] = btn;
+		}
+
+		// Tab panels (scroll area per tab)
+		const panelWrap = container.createEl('div', { cls: 'tasks-view-tab-panels' });
+
+		// Today panel
+		const todayPanel = panelWrap.createEl('div', { cls: 'tasks-view-tab-panel tasks-view-scroll' });
+		if (this.activeTab !== 'today') todayPanel.addClass('is-hidden');
+		this.tabPanels['today'] = todayPanel;
+		this.buildTodayPanel(todayPanel);
+
+		// Tomorrow panel
+		const tomorrowPanel = panelWrap.createEl('div', { cls: 'tasks-view-tab-panel tasks-view-scroll' });
+		if (this.activeTab !== 'tomorrow') tomorrowPanel.addClass('is-hidden');
+		this.tabPanels['tomorrow'] = tomorrowPanel;
+		this.buildSimplePanel(tomorrowPanel, 'tomorrow');
+
+		// Backlog panel
+		const backlogPanel = panelWrap.createEl('div', { cls: 'tasks-view-tab-panel tasks-view-scroll' });
+		if (this.activeTab !== 'backlog') backlogPanel.addClass('is-hidden');
+		this.tabPanels['backlog'] = backlogPanel;
+		this.buildSimplePanel(backlogPanel, 'backlog');
+	}
+
+	private buildTodayPanel(panel: HTMLElement) {
 		// Overdue section — starts visible so Tasks can render into it, hidden after count check
-		this.overdueSection = scroll.createEl('div', { cls: 'tasks-view-section tasks-view-section--overdue' });
+		this.overdueSection = panel.createEl('div', { cls: 'tasks-view-section tasks-view-section--overdue' });
 
 		const overdueHeader = this.overdueSection.createEl('div', { cls: 'tasks-view-section-header' });
 		this.overdueChevron = overdueHeader.createEl('div', { cls: 'tasks-view-section-chevron' });
@@ -82,7 +138,7 @@ export class TasksSidebarView extends ItemView {
 		});
 
 		// Today section
-		const todaySection = scroll.createEl('div', { cls: 'tasks-view-section' });
+		const todaySection = panel.createEl('div', { cls: 'tasks-view-section' });
 
 		const todayHeader = todaySection.createEl('div', { cls: 'tasks-view-section-header' });
 		const todayChevron = todayHeader.createEl('div', { cls: 'tasks-view-section-chevron' });
@@ -98,8 +154,41 @@ export class TasksSidebarView extends ItemView {
 			this.todayBody?.toggleClass('is-collapsed', todayCollapsed);
 			setIcon(todayChevron, todayCollapsed ? 'chevron-right' : 'chevron-down');
 		});
+	}
 
-		this.buildStatsShell(container);
+	private buildSimplePanel(panel: HTMLElement, which: 'tomorrow' | 'backlog') {
+		const section = panel.createEl('div', { cls: 'tasks-view-section' });
+		const header = section.createEl('div', { cls: 'tasks-view-section-header' });
+		const chevron = header.createEl('div', { cls: 'tasks-view-section-chevron' });
+		setIcon(chevron, 'chevron-down');
+		const label = which === 'tomorrow' ? 'Tomorrow' : 'Backlog';
+		header.createEl('span', { cls: 'tasks-view-section-title', text: label });
+		const count = header.createEl('span', { cls: 'tasks-view-section-count', text: '0' });
+		const body = section.createEl('div', { cls: 'tasks-view-section-body' });
+
+		if (which === 'tomorrow') {
+			this.tomorrowBody = body;
+			this.tomorrowCount = count;
+		} else {
+			this.backlogBody = body;
+			this.backlogCount = count;
+		}
+
+		let collapsed = false;
+		header.addEventListener('click', () => {
+			collapsed = !collapsed;
+			body.toggleClass('is-collapsed', collapsed);
+			setIcon(chevron, collapsed ? 'chevron-right' : 'chevron-down');
+		});
+	}
+
+	private switchTab(id: TabId) {
+		if (id === this.activeTab) return;
+		this.tabBtns[this.activeTab].removeClass('is-active');
+		this.tabPanels[this.activeTab].addClass('is-hidden');
+		this.activeTab = id;
+		this.tabBtns[id].addClass('is-active');
+		this.tabPanels[id].removeClass('is-hidden');
 	}
 
 	// ── Refresh (re-runs on every file change) ──────────
@@ -112,9 +201,8 @@ export class TasksSidebarView extends ItemView {
 	}
 
 	private async renderQueries() {
-		const { todayQuery, overdueQuery } = this.plugin.settings;
+		const { todayQuery, overdueQuery, tomorrowQuery, backlogQuery } = this.plugin.settings;
 
-		// Today
 		if (this.todayBody) {
 			this.todayBody.empty();
 			await MarkdownRenderer.render(
@@ -127,7 +215,6 @@ export class TasksSidebarView extends ItemView {
 			this.interceptLinks(this.todayBody);
 		}
 
-		// Overdue — render then check if any tasks came back
 		if (this.overdueBody && this.overdueSection) {
 			this.overdueBody.empty();
 			await MarkdownRenderer.render(
@@ -140,7 +227,30 @@ export class TasksSidebarView extends ItemView {
 			this.interceptLinks(this.overdueBody);
 		}
 
-		// Wait for Tasks plugin to finish processing code blocks, then update counts
+		if (this.tomorrowBody) {
+			this.tomorrowBody.empty();
+			await MarkdownRenderer.render(
+				this.app,
+				'```tasks\n' + tomorrowQuery + '\n```',
+				this.tomorrowBody,
+				'',
+				this,
+			);
+			this.interceptLinks(this.tomorrowBody);
+		}
+
+		if (this.backlogBody) {
+			this.backlogBody.empty();
+			await MarkdownRenderer.render(
+				this.app,
+				'```tasks\n' + backlogQuery + '\n```',
+				this.backlogBody,
+				'',
+				this,
+			);
+			this.interceptLinks(this.backlogBody);
+		}
+
 		setTimeout(() => this.updateCounts(), 600);
 	}
 
@@ -150,7 +260,7 @@ export class TasksSidebarView extends ItemView {
 			tasks.flatMap((t) => [t, ...flatten(t.children)]);
 		const flat = flatten(this.allTasks);
 
-		// Today count — from vault scan
+		// Today count
 		const todayCount = flat.filter(
 			(t) =>
 				t.status !== 'bookmark' &&
@@ -159,7 +269,7 @@ export class TasksSidebarView extends ItemView {
 		).length;
 		if (this.todayCount) this.todayCount.setText(String(todayCount));
 
-		// Overdue count — from vault scan, use this to show/hide section
+		// Overdue count — also controls section visibility
 		const overdueCount = flat.filter(
 			(t) =>
 				t.status !== 'done' &&
@@ -167,11 +277,34 @@ export class TasksSidebarView extends ItemView {
 				t.status !== 'bookmark' &&
 				((t.scheduled && t.scheduled < today) || (t.due && t.due < today)),
 		).length;
-
 		if (this.overdueSection) {
 			this.overdueSection.style.display = overdueCount > 0 ? '' : 'none';
 		}
 		if (this.overdueCount) this.overdueCount.setText(String(overdueCount));
+
+		// Tomorrow count
+		const tomorrow = new Date();
+		tomorrow.setDate(tomorrow.getDate() + 1);
+		const tomorrowStr = tomorrow.toISOString().split('T')[0] as string;
+		const tomorrowCount = flat.filter(
+			(t) =>
+				t.status !== 'bookmark' &&
+				t.status !== 'migrated' &&
+				t.status !== 'done' &&
+				(t.scheduled === tomorrowStr || t.due === tomorrowStr),
+		).length;
+		if (this.tomorrowCount) this.tomorrowCount.setText(String(tomorrowCount));
+
+		// Backlog count — no scheduled or due date, not done
+		const backlogCount = flat.filter(
+			(t) =>
+				t.status !== 'bookmark' &&
+				t.status !== 'migrated' &&
+				t.status !== 'done' &&
+				!t.scheduled &&
+				!t.due,
+		).length;
+		if (this.backlogCount) this.backlogCount.setText(String(backlogCount));
 	}
 
 	// ── Link interception ───────────────────────────────
@@ -281,7 +414,7 @@ export class TasksSidebarView extends ItemView {
 			tasks.flatMap((t) => [t, ...flatten(t.children)]);
 		const flat = flatten(this.allTasks);
 
-		// Active set = tasks due/scheduled today or overdue, not yet done (the day's workload)
+		// Active set = tasks due/scheduled today or overdue (the day's workload)
 		const activeSet = flat.filter(
 			(t) =>
 				t.status !== 'bookmark' &&
@@ -290,7 +423,6 @@ export class TasksSidebarView extends ItemView {
 				((t.scheduled && t.scheduled <= today) || (t.due && t.due <= today)),
 		);
 
-		// Done = completed today (completion date stamp is today)
 		const done = flat.filter(
 			(t) => t.status === 'done' && t.completionDate === today,
 		).length;

@@ -12,11 +12,25 @@ group by filename
 sort by scheduled
 sort by due`;
 
+export const DEFAULT_TOMORROW_QUERY = `not done
+(scheduled on tomorrow) OR (due on tomorrow)
+group by filename
+sort by scheduled
+sort by due`;
+
+export const DEFAULT_BACKLOG_QUERY = `not done
+no scheduled date
+no due date
+group by filename
+sort by created`;
+
 export interface TaskViewsSettings {
 	inboxFilePath: string;
 	excludedFolders: string;
 	todayQuery: string;
 	overdueQuery: string;
+	tomorrowQuery: string;
+	backlogQuery: string;
 }
 
 export const DEFAULT_SETTINGS: TaskViewsSettings = {
@@ -24,6 +38,8 @@ export const DEFAULT_SETTINGS: TaskViewsSettings = {
 	excludedFolders: 'System/Templates',
 	todayQuery: DEFAULT_TODAY_QUERY,
 	overdueQuery: DEFAULT_OVERDUE_QUERY,
+	tomorrowQuery: DEFAULT_TOMORROW_QUERY,
+	backlogQuery: DEFAULT_BACKLOG_QUERY,
 };
 
 export class TaskViewsSettingTab extends PluginSettingTab {
@@ -97,13 +113,63 @@ export class TaskViewsSettingTab extends PluginSettingTab {
 
 		new Setting(containerEl)
 			.setName('Overdue query')
-			.setDesc('Tasks shown in the Overdue section. Section is hidden if query returns no results.')
+			.setDesc('Tasks shown in the Overdue section of the Today tab. Section is hidden if query returns no results.')
 			.addTextArea((text) => {
 				text
 					.setPlaceholder(DEFAULT_OVERDUE_QUERY)
 					.setValue(this.plugin.settings.overdueQuery)
 					.onChange((value) => {
 						this.plugin.settings.overdueQuery = value;
+					});
+				text.inputEl.rows = 6;
+				text.inputEl.style.width = '340px';
+				text.inputEl.style.fontFamily = 'var(--font-monospace)';
+				text.inputEl.style.fontSize = 'var(--font-ui-smaller)';
+				text.inputEl.style.resize = 'vertical';
+			})
+			.addButton((btn) =>
+				btn
+					.setButtonText('Apply')
+					.setCta()
+					.onClick(async () => {
+						await this.plugin.saveSettings();
+					}),
+			);
+
+		new Setting(containerEl)
+			.setName('Tomorrow query')
+			.setDesc('Tasks shown in the Tomorrow tab.')
+			.addTextArea((text) => {
+				text
+					.setPlaceholder(DEFAULT_TOMORROW_QUERY)
+					.setValue(this.plugin.settings.tomorrowQuery)
+					.onChange((value) => {
+						this.plugin.settings.tomorrowQuery = value;
+					});
+				text.inputEl.rows = 6;
+				text.inputEl.style.width = '340px';
+				text.inputEl.style.fontFamily = 'var(--font-monospace)';
+				text.inputEl.style.fontSize = 'var(--font-ui-smaller)';
+				text.inputEl.style.resize = 'vertical';
+			})
+			.addButton((btn) =>
+				btn
+					.setButtonText('Apply')
+					.setCta()
+					.onClick(async () => {
+						await this.plugin.saveSettings();
+					}),
+			);
+
+		new Setting(containerEl)
+			.setName('Backlog query')
+			.setDesc('Tasks shown in the Backlog tab.')
+			.addTextArea((text) => {
+				text
+					.setPlaceholder(DEFAULT_BACKLOG_QUERY)
+					.setValue(this.plugin.settings.backlogQuery)
+					.onChange((value) => {
+						this.plugin.settings.backlogQuery = value;
 					});
 				text.inputEl.rows = 6;
 				text.inputEl.style.width = '340px';
