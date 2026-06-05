@@ -282,9 +282,9 @@ export class TasksSidebarView extends ItemView {
 		this.progressFill = barWrap.createEl('div', { cls: 'tasks-view-progress-fill' });
 		this.progressFill.style.width = '0%';
 		const pills = statsEl.createEl('div', { cls: 'tasks-view-stat-pills' });
-		this.pillDone = pills.createEl('span', { cls: 'tasks-view-stat-pill', text: '0 done' });
-		this.pillPending = pills.createEl('span', { cls: 'tasks-view-stat-pill', text: '0 pending' });
-		this.pillOverdue = pills.createEl('span', { cls: 'tasks-view-stat-pill', text: '0 overdue' });
+		this.pillDone = pills.createEl('span', { cls: 'tasks-view-stat-pill tasks-view-stat-pill--done', text: '0 done' });
+		this.pillPending = pills.createEl('span', { cls: 'tasks-view-stat-pill tasks-view-stat-pill--pending', text: '0 pending' });
+		this.pillOverdue = pills.createEl('span', { cls: 'tasks-view-stat-pill tasks-view-stat-pill--overdue', text: '0 overdue' });
 	}
 
 	private updateStats(today: string) {
@@ -315,7 +315,6 @@ export class TasksSidebarView extends ItemView {
 		if (this.pillPending) this.pillPending.setText(`${pending} pending`);
 		if (this.pillOverdue) {
 			this.pillOverdue.setText(`${overdue} overdue`);
-			this.pillOverdue.toggleClass('is-overdue', overdue > 0);
 		}
 	}
 }

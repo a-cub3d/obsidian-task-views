@@ -103,7 +103,7 @@
 }
 
 .tasks-view-section-body {
-	padding: 0 4px;
+	padding: 0 8px 4px 12px;
 }
 
 .tasks-view-section-body.is-collapsed {
@@ -402,7 +402,7 @@
 
 .tasks-view-progress-bar {
 	height: 8px;
-	background: var(--background-modifier-border);
+	background: color-mix(in srgb, var(--color-green) 20%, var(--background-modifier-border));
 	border-radius: 99px;
 	overflow: hidden;
 }
@@ -412,6 +412,7 @@
 	background: linear-gradient(to right, var(--interactive-accent), var(--color-green));
 	border-radius: 99px;
 	transition: width 0.3s ease;
+	min-width: 4px;
 }
 
 .tasks-view-stat-pills {
@@ -422,13 +423,23 @@
 
 .tasks-view-stat-pill {
 	font-size: var(--font-ui-smaller);
-	color: var(--text-muted);
-	background: var(--background-modifier-border);
 	border-radius: 10px;
 	padding: 2px 10px;
+	font-weight: 500;
 }
 
-.tasks-view-stat-pill.is-overdue {
+.tasks-view-stat-pill--done {
+	background: color-mix(in srgb, var(--color-green) 18%, transparent);
+	color: var(--color-green);
+}
+
+.tasks-view-stat-pill--pending {
+	background: color-mix(in srgb, var(--color-orange) 18%, transparent);
+	color: var(--color-orange);
+}
+
+.tasks-view-stat-pill--overdue {
+	background: color-mix(in srgb, var(--color-red) 18%, transparent);
 	color: var(--color-red);
 }
 

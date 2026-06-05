@@ -37,7 +37,7 @@ export class TaskViewsSettingTab extends PluginSettingTab {
 	display(): void {
 		const { containerEl } = this;
 		containerEl.empty();
-		containerEl.createEl('h2', { text: 'Obsidian Task Views' });
+		containerEl.createEl('h2', { text: 'Task Views' });
 
 		// ── Inbox ──────────────────────────────────────────
 		containerEl.createEl('h3', { text: 'Quick Add' });
@@ -85,10 +85,11 @@ export class TaskViewsSettingTab extends PluginSettingTab {
 					.onChange((value) => {
 						this.plugin.settings.todayQuery = value;
 					});
-				text.inputEl.rows = 5;
-				text.inputEl.style.width = '100%';
+				text.inputEl.rows = 6;
+				text.inputEl.style.width = '340px';
 				text.inputEl.style.fontFamily = 'var(--font-monospace)';
 				text.inputEl.style.fontSize = 'var(--font-ui-smaller)';
+				text.inputEl.style.resize = 'vertical';
 			})
 			.addButton((btn) =>
 				btn
@@ -109,10 +110,11 @@ export class TaskViewsSettingTab extends PluginSettingTab {
 					.onChange((value) => {
 						this.plugin.settings.overdueQuery = value;
 					});
-				text.inputEl.rows = 5;
-				text.inputEl.style.width = '100%';
+				text.inputEl.rows = 6;
+				text.inputEl.style.width = '340px';
 				text.inputEl.style.fontFamily = 'var(--font-monospace)';
 				text.inputEl.style.fontSize = 'var(--font-ui-smaller)';
+				text.inputEl.style.resize = 'vertical';
 			})
 			.addButton((btn) =>
 				btn
