@@ -21,10 +21,12 @@ A better UI for visualizing and interacting with tasks in [Obsidian](https://obs
 
 ## Requirements
 
-- [Obsidian](https://obsidian.md) v1.0.0 or later
-- [Tasks plugin](https://obsidian.md/plugins?id=obsidian-tasks-plugin) installed and enabled
+- [Obsidian](https://obsidian.md) — latest version
+- [Tasks plugin](https://obsidian.md/plugins?id=obsidian-tasks-plugin) — latest version, installed and enabled
 
 Task Views will show a warning and refuse to render if the Tasks plugin is not active.
+
+> **Compatibility disclaimer:** This plugin was developed and tested on a MacBook and iPhone running the latest macOS and iOS. It has not been tested on any other platform, Obsidian version, or Tasks plugin version. It may work elsewhere, but there are no guarantees.
 
 ---
 
