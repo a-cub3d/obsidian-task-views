@@ -39,9 +39,12 @@ export class TasksSidebarView extends ItemView {
 	getIcon(): string { return 'checkmark'; }
 
 	async onOpen(): Promise<void> {
-		// Gear icon in the title bar
-
-
+		this.addAction('settings', 'Task Views settings', () => {
+			// @ts-expect-error — internal settings API
+			this.app.setting.open();
+			// @ts-expect-error — internal settings API
+			this.app.setting.openTabById('obsidian-task-views');
+		});
 
 		this.buildShell();
 		await this.refresh();
@@ -53,23 +56,6 @@ export class TasksSidebarView extends ItemView {
 	// ── Shell (built once) ──────────────────────────────
 
 	private buildShell() {
-		// Add settings icon to the view's header action bar
-		const actionsEl = this.containerEl.closest('.workspace-leaf')
-			?.querySelector('.view-actions') as HTMLElement | null;
-		if (actionsEl && !actionsEl.querySelector('.tasks-view-settings-btn')) {
-			const btn = actionsEl.createEl('button', {
-				cls: 'clickable-icon view-action tasks-view-settings-btn',
-				attr: { 'aria-label': 'Tasks View settings' },
-			});
-			setIcon(btn, 'lucide-settings');
-			btn.addEventListener('click', () => {
-				// @ts-expect-error — internal settings API
-				this.app.setting.open();
-				// @ts-expect-error — internal settings API
-				this.app.setting.openTabById('obsidian-task-views');
-			});
-		}
-
 		const container = this.containerEl.children[1] as HTMLElement;
 		container.empty();
 		container.addClass('tasks-view-container');
@@ -237,11 +223,12 @@ export class TasksSidebarView extends ItemView {
 			attr: { placeholder: 'Add to inbox…', type: 'text' },
 		}) as HTMLInputElement;
 
-		const settingsLink = topRow.createEl('span', {
-			cls: 'tasks-view-settings-link',
-			text: 'Settings',
+		const settingsBtn = topRow.createEl('button', {
+			cls: 'tasks-view-settings-btn',
+			attr: { 'aria-label': 'Task Views settings' },
 		});
-		settingsLink.addEventListener('click', () => {
+		setIcon(settingsBtn, 'settings');
+		settingsBtn.addEventListener('click', () => {
 			// @ts-expect-error — accessing internal settings API
 			this.app.setting.open();
 			// @ts-expect-error — accessing internal settings API

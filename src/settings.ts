@@ -37,10 +37,9 @@ export class TaskViewsSettingTab extends PluginSettingTab {
 	display(): void {
 		const { containerEl } = this;
 		containerEl.empty();
-		containerEl.createEl('h2', { text: 'Task Views' });
 
-		// ── Inbox ──────────────────────────────────────────
-		containerEl.createEl('h3', { text: 'Quick Add' });
+		// ── Quick Add ──────────────────────────────────────
+		containerEl.createEl('h3', { text: 'Quick Add', cls: 'tasks-view-settings-heading' });
 
 		new Setting(containerEl)
 			.setName('Inbox file path')
@@ -55,23 +54,19 @@ export class TaskViewsSettingTab extends PluginSettingTab {
 					}),
 			);
 
-		new Setting(containerEl)
-			.setName('Excluded folders')
-			.setDesc('Comma-separated folder paths to skip during vault scan.')
-			.addText((text) =>
-				text
-					.setPlaceholder('System/Templates')
-					.setValue(this.plugin.settings.excludedFolders)
-					.onChange(async (value) => {
-						this.plugin.settings.excludedFolders = value;
-						await this.plugin.saveSettings();
-					}),
-			);
+		// ── Excluded folders ───────────────────────────────
+		containerEl.createEl('h3', { text: 'Excluded Folders', cls: 'tasks-view-settings-heading' });
+		containerEl.createEl('p', {
+			text: 'Folders to skip during vault scan. Subfolders are also excluded.',
+			cls: 'setting-item-description',
+		});
+
+		this.renderExcludedFolders(containerEl);
 
 		// ── Queries ────────────────────────────────────────
-		containerEl.createEl('h3', { text: 'Queries' });
+		containerEl.createEl('h3', { text: 'Queries', cls: 'tasks-view-settings-heading' });
 		containerEl.createEl('p', {
-			text: 'These are standard Tasks plugin query syntax. Changes take effect immediately when saved.',
+			text: 'Standard Tasks plugin query syntax. Changes take effect when you click Apply.',
 			cls: 'setting-item-description',
 		});
 
@@ -124,5 +119,58 @@ export class TaskViewsSettingTab extends PluginSettingTab {
 						await this.plugin.saveSettings();
 					}),
 			);
+	}
+
+	private renderExcludedFolders(containerEl: HTMLElement) {
+		const getFolders = () =>
+			this.plugin.settings.excludedFolders
+				.split(',')
+				.map((f) => f.trim())
+				.filter((f) => f.length > 0);
+
+		const saveFolders = async (folders: string[]) => {
+			this.plugin.settings.excludedFolders = folders.join(', ');
+			await this.plugin.saveSettings();
+		};
+
+		// Chip list
+		const chipList = containerEl.createEl('div', { cls: 'tasks-view-excluded-chips' });
+
+		const renderChips = () => {
+			chipList.empty();
+			for (const folder of getFolders()) {
+				const chip = chipList.createEl('div', { cls: 'tasks-view-excluded-chip' });
+				chip.createEl('span', { text: folder });
+				const removeBtn = chip.createEl('button', { text: '×', cls: 'tasks-view-excluded-chip-remove' });
+				removeBtn.addEventListener('click', async () => {
+					await saveFolders(getFolders().filter((f) => f !== folder));
+					renderChips();
+				});
+			}
+		};
+
+		renderChips();
+
+		// Add row
+		const addRow = containerEl.createEl('div', { cls: 'tasks-view-excluded-add' });
+		const input = addRow.createEl('input', {
+			cls: 'tasks-view-excluded-input',
+			attr: { type: 'text', placeholder: 'e.g. System/Templates' },
+		}) as HTMLInputElement;
+		const addBtn = addRow.createEl('button', { text: 'Add', cls: 'tasks-view-excluded-add-btn' });
+
+		const addFolder = async () => {
+			const val = input.value.trim();
+			if (!val) return;
+			const current = getFolders();
+			if (!current.includes(val)) {
+				await saveFolders([...current, val]);
+				renderChips();
+			}
+			input.value = '';
+		};
+
+		addBtn.addEventListener('click', addFolder);
+		input.addEventListener('keydown', (e) => { if (e.key === 'Enter') addFolder(); });
 	}
 }
