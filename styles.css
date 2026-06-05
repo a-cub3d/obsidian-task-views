@@ -1,9 +1,10 @@
 /* ── Container ─────────────────────────────────────────── */
 
 .tasks-view-container {
+	position: absolute;
+	inset: 0;
 	display: flex;
 	flex-direction: column;
-	height: 100%;
 	overflow: hidden;
 	color: var(--text-normal);
 	background: var(--background-secondary);
@@ -405,7 +406,11 @@
 	display: flex;
 	flex-direction: column;
 	gap: 6px;
-	margin-bottom: env(safe-area-inset-bottom, 0px);
+}
+
+.is-mobile .tasks-view-stats {
+	padding-bottom: 8px;
+	margin-bottom: -40px;
 }
 
 .tasks-view-progress-bar {
