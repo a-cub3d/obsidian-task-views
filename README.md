@@ -8,7 +8,7 @@ I built this for my own workflow and wanted it to feel as native to the Tasks pl
 
 > **Honest disclaimer:** This was vibe coded — I'm not a developer. I built it for my own workflow and I'm sharing it in case it's useful to others. I'll update it as needed for my personal use and I'm not planning to submit it to the community plugin list. Use at your own risk 🙂
 
-![Task Views sidebar](screenshots/Screen%20Shot%202026-06-05%20at%2016.09.03%20PM.png)
+<img src="screenshots/Screen%20Shot%202026-06-05%20at%2016.09.03%20PM.png" width="300"> <img src="screenshots/Screen%20Shot%202026-06-05%20at%2015.57.52%20PM.png" width="300">
 
 ---
 
