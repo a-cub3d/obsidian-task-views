@@ -7,7 +7,11 @@ export const VIEW_TYPE_TASKS_SIDEBAR = 'tasks-view-sidebar';
 type TabId = 'today' | 'tomorrow' | 'backlog';
 
 function getToday(): string {
-	return new Date().toISOString().split('T')[0] as string;
+	const d = new Date();
+	const yyyy = d.getFullYear();
+	const mm = String(d.getMonth() + 1).padStart(2, '0');
+	const dd = String(d.getDate()).padStart(2, '0');
+	return `${yyyy}-${mm}-${dd}`;
 }
 
 export class TasksSidebarView extends ItemView {
@@ -285,7 +289,10 @@ export class TasksSidebarView extends ItemView {
 		// Tomorrow count
 		const tomorrow = new Date();
 		tomorrow.setDate(tomorrow.getDate() + 1);
-		const tomorrowStr = tomorrow.toISOString().split('T')[0] as string;
+		const ty = tomorrow.getFullYear();
+		const tm = String(tomorrow.getMonth() + 1).padStart(2, '0');
+		const td = String(tomorrow.getDate()).padStart(2, '0');
+		const tomorrowStr = `${ty}-${tm}-${td}`;
 		const tomorrowCount = flat.filter(
 			(t) =>
 				t.status !== 'bookmark' &&
