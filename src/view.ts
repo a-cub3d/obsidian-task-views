@@ -2,7 +2,7 @@ import { ItemView, MarkdownRenderer, MarkdownView, TFile, WorkspaceLeaf, setIcon
 import type TaskViewsPlugin from './main';
 import { scanVault, Task } from './parser';
 
-export const VIEW_TYPE_TASKS_SIDEBAR = 'tasks-view-sidebar';
+export const VIEW_TYPE_TASKS_SIDEBAR = 'tasks-companion-pane-sidebar';
 
 type TabId = 'today' | 'tomorrow' | 'backlog';
 
@@ -62,7 +62,7 @@ export class TasksSidebarView extends ItemView {
 			// @ts-expect-error — internal settings API
 			this.app.setting.open();
 			// @ts-expect-error — internal settings API
-			this.app.setting.openTabById('obsidian-task-views');
+			this.app.setting.openTabById('tasks-companion-pane');
 		});
 
 		this.buildShell();
@@ -372,7 +372,7 @@ export class TasksSidebarView extends ItemView {
 			// @ts-expect-error — accessing internal settings API
 			this.app.setting.open();
 			// @ts-expect-error — accessing internal settings API
-			this.app.setting.openTabById('obsidian-task-views');
+			this.app.setting.openTabById('tasks-companion-pane');
 		});
 
 		input.addEventListener('keydown', async (e) => {

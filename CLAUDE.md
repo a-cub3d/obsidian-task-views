@@ -1,4 +1,4 @@
-# obsidian-tasks-view
+# tasks-companion-pane
 
 ## What This Is
 

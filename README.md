@@ -1,8 +1,8 @@
-# Task Views
+# Tasks Companion Pane
 
-A sidebar view for [Obsidian](https://obsidian.md) that gives you a focused way to see your tasks, built on top of the [Tasks plugin](https://github.com/obsidian-tasks-group/obsidian-tasks).
+A sidebar companion for [Obsidian](https://obsidian.md) that gives you a focused way to see your tasks, built on top of the [Tasks plugin](https://github.com/obsidian-tasks-group/obsidian-tasks).
 
-**Task Views is a display layer — it does not replace the Tasks plugin.** All task logic, editing, and completion is handled by Tasks. This plugin adds a sidebar with tabs, quick add, and daily progress tracking.
+**Tasks Companion Pane is a display layer — it does not replace the Tasks plugin.** All task logic, editing, and completion is handled by Tasks. This plugin adds a sidebar with tabs, quick add, and daily progress tracking.
 
 I built this for my own workflow and wanted it to feel as native to the Tasks plugin as possible — no reimplementing what Tasks already does well, just a cleaner surface for seeing and acting on what's due. If it fits your workflow too, great.
 

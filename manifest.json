@@ -1,9 +1,9 @@
 {
-	"id": "obsidian-task-views",
-	"name": "Task Views",
+	"id": "tasks-companion-pane",
+	"name": "Tasks Companion Pane",
 	"version": "1.0.0",
 	"minAppVersion": "1.0.0",
-	"description": "A better UI for visualizing and interacting with tasks managed by the Tasks plugin.",
+	"description": "A sidebar companion for the Tasks plugin — tabs, quick add, and daily progress tracking.",
 	"author": "a-cub3d",
 	"authorUrl": "https://github.com/a-cub3d",
 	"isDesktopOnly": false
