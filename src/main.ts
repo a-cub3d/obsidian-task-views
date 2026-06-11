@@ -12,14 +12,6 @@ export default class TaskViewsPlugin extends Plugin {
 	async onload() {
 		await this.loadSettings();
 
-		if (!this.hasTasksPlugin()) {
-			new Notice(
-				'Obsidian Task Views: The Tasks plugin (obsidian-tasks-group) must be installed and enabled.',
-				10000,
-			);
-			return;
-		}
-
 		this.registerView(
 			VIEW_TYPE_TASKS_SIDEBAR,
 			(leaf) => new TasksSidebarView(leaf, this),
@@ -48,6 +40,17 @@ export default class TaskViewsPlugin extends Plugin {
 	}
 
 	private async activateSidebarView() {
+		// Dependency check happens here — not in onload() — because this runs
+		// after onLayoutReady, when every enabled plugin is guaranteed to be
+		// loaded. Checking in onload() races against plugin load order.
+		if (!this.hasTasksPlugin()) {
+			new Notice(
+				'Tasks Companion Pane: The Tasks plugin (obsidian-tasks-group) must be installed and enabled.',
+				10000,
+			);
+			return;
+		}
+
 		const existing = this.app.workspace.getLeavesOfType(VIEW_TYPE_TASKS_SIDEBAR);
 		const existingLeaf = existing[0];
 		if (existingLeaf) {

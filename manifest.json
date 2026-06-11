@@ -1,7 +1,7 @@
 {
 	"id": "tasks-companion-pane",
 	"name": "Tasks Companion Pane",
-	"version": "1.0.0",
+	"version": "1.0.1",
 	"minAppVersion": "1.0.0",
 	"description": "A sidebar companion for the Tasks plugin — tabs, quick add, and daily progress tracking.",
 	"author": "a-cub3d",
